@@ -3,26 +3,40 @@
     <!-- 顶部导航栏 -->
     <van-nav-bar title="教育信息" left-arrow @click-left="goBack" />
 
-    <!-- 列表展示（支持拖拽） -->
+    <!-- 列表展示 -->
     <div v-if="list.length === 0" class="empty-tip">
       暂无数据，点击底部“+”添加学历或学籍信息
     </div>
 
     <div v-else class="draggable-list">
-      <van-cell-group v-for="(item, index) in list" :key="item.id" inset class="draggable-item" :data-index="index"
-        @touchstart="handleDragStart($event, index)" @touchmove="handleDragMove" @touchend="handleDragEnd"
-        @mousedown="handleDragStart($event, index)" draggable="false">
-        <van-cell :title="item.schoolName" :label="`${item.educationLevel} | ${item.major}`" :class="[
-          'education-item',
-          { 'type-xl': item.type === 'xl', 'type-xj': item.type === 'xj' }
-        ]" clickable @click="editItem(index)">
-          <template #right-icon>
-            <span style="color: #969799; font-size: 12px; margin-right: 8px">
-              {{ item.studyForm }}
-            </span>
-            <van-icon name="delete" color="#ee0a24" @click.stop="deleteItem(index)" />
+      <van-cell-group v-for="(item, index) in list" :key="item.id" inset class="draggable-item">
+        <!-- 左滑容器 -->
+        <van-swipe-cell :left-width="0" :right-width="120">
+          <!-- 主内容区域（支持拖拽） -->
+          <van-cell :title="item.schoolName" :label="`${item.educationLevel} | ${item.major}`" :class="[
+            'education-item',
+            { 'type-xl': item.type === 'xl', 'type-xj': item.type === 'xj' }
+          ]" @touchstart="handleLongPressStart($event, index)" @touchmove="handleTouchMove" @touchend="handleTouchEnd"
+            @touchcancel="handleTouchCancel">
+            <template #right-icon>
+              <span style="color: #969799; font-size: 12px; margin-right: 8px">
+                {{ item.studyForm }}
+              </span>
+            </template>
+          </van-cell>
+
+          <!-- 右侧滑出按钮 -->
+          <template #right>
+            <div style="display: flex; height: 100%">
+              <van-button square type="primary" text style="width: 60px; border-radius: 0" @click="quickEdit(index)">
+                修改
+              </van-button>
+              <van-button square type="danger" text style="width: 60px; border-radius: 0" @click="quickDelete(index)">
+                删除
+              </van-button>
+            </div>
           </template>
-        </van-cell>
+        </van-swipe-cell>
       </van-cell-group>
     </div>
 
@@ -49,7 +63,7 @@
       </van-form>
     </van-popup>
 
-    <!-- 底部两个加号按钮 -->
+    <!-- 底部加号按钮 -->
     <div class="add-buttons">
       <van-button round type="primary" icon="plus" size="large" @click="openForm('xl')" class="add-btn xl-btn">
         学历
@@ -57,13 +71,15 @@
       <van-button round type="success" icon="plus" size="large" @click="openForm('xj')" class="add-btn xj-btn">
         学籍
       </van-button>
+
+      <van-button round type="default" icon="question" size="small" class="help-fab" @click="showHelpDialog" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { showToast } from 'vant';
+import { showToast, showDialog } from 'vant';
 
 // ===== 返回 =====
 const goBack = () => {
@@ -84,62 +100,134 @@ const currentForm = reactive({
   studyForm: ''
 });
 
-// ===== 拖拽状态 =====
-let dragStartIndex = null;
+// ===== 拖拽与长按状态 =====
 let isDragging = false;
+let dragStartIndex = null;
+let longPressTimer = null;
+const LONG_PRESS_DELAY = 3000; // 3秒长按
+let startX = 0;
+let startY = 0;
+const MOVE_THRESHOLD = 10; // 垂直移动超过10px才视为拖拽
 
-// ===== 拖拽事件 =====
-const handleDragStart = (e, index) => {
+// ===== 左滑快捷操作 =====
+const quickEdit = (index) => {
+  editItem(index);
+};
+
+const quickDelete = (index) => {
+  deleteItem(index);
+};
+
+// 显示操作指南
+const showHelpDialog = () => {
+  showDialog({
+    title: '操作指南',
+    message: `
+      <div style="text-align: left; line-height: 1.6">
+        <p>🔹 <strong>左滑</strong>列表项：显示「修改」「删除」按钮</p>
+        <p>🔹 <strong>长按 3 秒后上下拖动</strong>：调整排序</p>
+        <p>🔹 点击底部「学历」或「学籍」按钮：添加新信息</p>
+      </div>
+    `,
+    confirmButtonText: '我知道了',
+    closeOnPopstate: true,
+    allowHtml: true
+  });
+};
+
+// ===== 事件处理器 =====
+
+const handleLongPressStart = (e, index) => {
+  // ⚠️ 必须第一行 preventDefault，确保 iOS 正常工作
+  e.preventDefault();
+
+  if (isDragging) return;
+
+  const touch = e.touches[0];
+  startX = touch.clientX;
+  startY = touch.clientY;
   dragStartIndex = index;
-  isDragging = true;
-  // 移动端防止滚动
-  if (e.type === 'touchstart') {
-    e.preventDefault();
-  }
-};
 
-const handleDragMove = (e) => {
-  if (!isDragging || dragStartIndex === null) return;
-  e.preventDefault(); // 阻止默认滚动
-};
-
-const handleDragEnd = (e) => {
-  if (!isDragging || dragStartIndex === null) return;
-  isDragging = false;
-
-  // 获取当前手指/鼠标位置
-  const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-  const elements = document.querySelectorAll('.draggable-item');
-  let dragEndIndex = dragStartIndex;
-
-  // 计算目标位置
-  for (let i = 0; i < elements.length; i++) {
-    const rect = elements[i].getBoundingClientRect();
-    if (clientY < rect.top + rect.height / 2) {
-      dragEndIndex = i;
-      break;
+  longPressTimer = setTimeout(() => {
+    if (!isDragging) {
+      editItem(index);
     }
+    longPressTimer = null;
+  }, LONG_PRESS_DELAY);
+};
+
+const handleTouchMove = (e) => {
+  if (!longPressTimer && !isDragging) return;
+
+  const touch = e.touches[0];
+  const dx = Math.abs(touch.clientX - startX);
+  const dy = Math.abs(touch.clientY - startY);
+
+  // 如果已在拖拽中，继续阻止默认行为
+  if (isDragging) {
+    e.preventDefault();
+    return;
   }
 
-  // 如果位置变化，交换
-  if (dragStartIndex !== dragEndIndex) {
-    const newList = [...list.value];
-    const movedItem = newList.splice(dragStartIndex, 1)[0];
-    newList.splice(dragEndIndex, 0, movedItem);
-    list.value = newList;
-    saveToStorage(); // 保存到 localStorage
-    showToast('排序已更新');
+  // 仅当垂直移动为主（dy > dx）且超过阈值时，才启动拖拽排序
+  if (dy > dx && dy > MOVE_THRESHOLD) {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+    isDragging = true;
+    e.preventDefault(); // 阻止页面滚动
+  }
+  // 水平滑动（dx >= dy）：不处理，交给 van-swipe-cell
+};
+
+const handleTouchEnd = (e) => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+
+  if (isDragging) {
+    const clientY = e.changedTouches[0].clientY;
+    const items = document.querySelectorAll('.draggable-item');
+    let dragEndIndex = dragStartIndex;
+
+    for (let i = 0; i < items.length; i++) {
+      const rect = items[i].getBoundingClientRect();
+      if (clientY < rect.top + rect.height / 2) {
+        dragEndIndex = i;
+        break;
+      }
+    }
+
+    if (dragStartIndex !== dragEndIndex) {
+      const newList = [...list.value];
+      const movedItem = newList.splice(dragStartIndex, 1)[0];
+      newList.splice(dragEndIndex, 0, movedItem);
+      list.value = newList;
+      saveToStorage();
+      showToast('排序已更新');
+    }
+    isDragging = false;
   }
 };
 
-// ===== localStorage =====
+const handleTouchCancel = () => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+  isDragging = false;
+};
+
+// ===== 本地存储 =====
 const loadFromStorage = () => {
   try {
     const xlList = JSON.parse(localStorage.getItem('xlList') || '[]');
     const xjList = JSON.parse(localStorage.getItem('xjList') || '[]');
     list.value = [...xlList, ...xjList];
   } catch (e) {
-    console.error('读取失败', e);
+    console.error('读取本地数据失败', e);
     list.value = [];
   }
 };
@@ -155,7 +243,7 @@ const saveToStorage = () => {
   }
 };
 
-// ===== 表单逻辑（保持不变）=====
+// ===== 表单逻辑 =====
 const openForm = (type) => {
   editingIndex.value = null;
   currentFormType.value = type;
@@ -173,10 +261,10 @@ const editItem = (index) => {
   const item = list.value[index];
   currentFormType.value = item.type;
   Object.assign(currentForm, {
-    schoolName: item.schoolName || '',
-    educationLevel: item.educationLevel || '',
-    major: item.major || '',
-    studyForm: item.studyForm || ''
+    schoolName: item.schoolName,
+    educationLevel: item.educationLevel,
+    major: item.major,
+    studyForm: item.studyForm
   });
   showForm.value = true;
 };
@@ -219,6 +307,7 @@ const deleteItem = (index) => {
   showForm.value = false;
 };
 
+// ===== 初始化 =====
 onMounted(() => {
   loadFromStorage();
 });
@@ -241,12 +330,6 @@ onMounted(() => {
 
 .draggable-item {
   margin-bottom: 8px;
-  cursor: grab;
-  user-select: none;
-}
-
-.draggable-item:active {
-  cursor: grabbing;
 }
 
 .education-item.type-xl {
@@ -281,5 +364,20 @@ onMounted(() => {
 .xj-btn {
   background-color: #07c160;
   border-color: #07c160;
+}
+
+.help-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 90px;
+  /* 高于底部加号按钮 */
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 999;
 }
 </style>

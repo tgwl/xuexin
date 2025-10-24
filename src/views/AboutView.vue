@@ -12,7 +12,7 @@
           </template>
           <template #title>
             <div class="app-name">学生信息助手</div>
-            <div class="app-version">v1.2.0</div>
+            <div class="app-version">v1.3.0</div>
           </template>
         </van-cell>
 
@@ -103,7 +103,14 @@ const showQRCode = () => {
 }
 // 模拟更新日志数据
 const changelog = [
-
+{
+    version: '1.3.0',
+    date: '2025-10-25',
+    changes: [
+      { type: 'feature', desc: '补充剩下页面' },
+      { type: 'improvement', desc: '完善修改页面排序和修改冲突' }
+    ]
+  },
   {
     version: '1.2.0',
     date: '2025-10-24',
