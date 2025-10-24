@@ -42,39 +42,9 @@ const router = useRouter()
 const activeTab = ref(0)
 
 onMounted(() => {
-  console.log('组件挂载完成')
+  
 })
 
-const xjList= [
-      {
-        id: 'abc123',
-        schoolName: 'xl学',
-        educationLevel: '本科',
-        major: '计算机科学与技术',
-        studyForm: '普通全日制',
-      },
-      {
-        id: 'abc124',
-        schoolName: '河北',
-        educationLevel: '本科',
-        major: '计算机科学与技术',
-        studyForm: '普通全日制',
-      },
-      {
-        id: 'abc125',
-        schoolName: '河南科技大学',
-        educationLevel: '本科',
-        major: '工程造价',
-        studyForm: '普通全日制',
-      },
-      {
-        id: 'abc126',
-        schoolName: '奥里给',
-        educationLevel: '本科',
-        major: '计算机科学与技术',
-        studyForm: '普通全日制',
-      },
-    ]
 const rawData = {
   code: '200',
   msg: '',
@@ -102,7 +72,6 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/wap/report/search.jsp  ',
               bgHexStr: '#6AFFE4',
-              route: '/xjyz'
             },
             {
               name: '学历查询',
@@ -110,7 +79,6 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/xlcx/lscx/query.do  ',
               bgHexStr: '#97E6FF',
-              route: '/xlcx'
             },
             {
               name: '学历验证',
@@ -118,7 +86,6 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/wap/report/search.jsp  ',
               bgHexStr: '#97E6FF',
-              route: '/xlyz'
             },
             {
               name: '学历认证',
@@ -126,7 +93,6 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/wap/xlrz/report/report_gdjyxl.jsp  ',
               bgHexStr: '#97E6FF',
-              route: '/xlrz'
             },
             {
               name: '学位查询',
@@ -134,7 +100,6 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/xwcx/lscx/query.do  ',
               bgHexStr: '#95D6FF',
-              route: '/xwcx'
             },
             {
               name: '学位验证',
@@ -142,7 +107,6 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/wap/report/search.jsp  ',
               bgHexStr: '#95D6FF',
-              route: '/xwyz'
             }
           ]
         },
@@ -163,7 +127,6 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/wap/xlrz/report/report_zdjyxl.jsp  ',
               bgHexStr: '#97E6FF',
-              route: '/zdjyxl'
             },
             {
               name: '高等教育成绩单',
@@ -171,15 +134,13 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/wap/xlrz/report/report_gdjycjd.jsp  ',
               bgHexStr: '#95D6FF',
-              route: '/gdjycjd'
             },
             {
               name: '高考成绩单',
               icon: 'https://t1.chei.com.cn/chsi/push/images/conf/home/202302/gkcjd-2.0.0.png  ',
               type: 'h5',
               data: 'https://www.chsi.com.cn/wap/xlrz/report/report_gkcj.jsp  ',
-              bgHexStr: '#97E6FF',
-              route: '/gkcjd'
+              bgHexStr: '#97E6FF'
             },
             {
               name: '中学成绩单',
@@ -187,7 +148,6 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/wap/xlrz/report/report_zxcj.jsp  ',
               bgHexStr: '#6AFFE4',
-              route: '/zxcjd'
             },
             {
               name: '会考成绩单',
@@ -195,7 +155,6 @@ const rawData = {
               type: 'h5',
               data: 'https://www.chsi.com.cn/wap/xlrz/report/report_hkcj.jsp  ',
               bgHexStr: '#FFD9A9',
-              route: '/hkcjd'
             }
           ]
         }
@@ -218,22 +177,13 @@ const goToPage = (item: any) => {
   if (item.route) {
     router.push(item.route)
   } else {
-    console.warn('未配置路由:', item.name)
+    console.warn('未配置路由:', item.data)
+    window.location.href = item.data;
   }
 }
 
 
-// 图标 URL 处理（去除空格）
-const getIconUrl = (url: string) => {
-  return (url || '').trim()
-}
 
-// 图片加载失败 fallback（可选）
-const handleImageError = (e: Event, item: any) => {
-  const target = e.target as HTMLImageElement
-  // 可替换为默认图标
-  target.src = 'https://via.placeholder.com/22/cccccc/FFFFFF?text=?'
-}
 </script>
 
 <style scoped>
