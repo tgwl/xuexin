@@ -51,6 +51,7 @@ const router = useRouter();
 
 // 默认头像
 const defaultAvatar = 'https://img01.yzcdn.cn/vant/cat.jpeg';
+const defaultName ="张三"；
 
 // 响应式头像 URL
 const avatar = ref(defaultAvatar);
@@ -65,7 +66,7 @@ const loadAvatar = () => {
 
       console.log(obj);
       avatar.value = obj.avatar || defaultAvatar;
-      name.value = obj.xm || "王五五";
+      name.value = obj.xm || defaultName;
     } catch (e) {
       console.error('JSON 解析失败:', e);
     }
