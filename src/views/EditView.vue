@@ -1,11 +1,7 @@
 <template>
   <div class="education-page">
     <!-- 顶部导航栏 -->
-    <van-nav-bar
-      title="教育信息"
-      left-arrow
-      @click-left="goBack"
-    />
+    <van-nav-bar title="教育信息" left-arrow @click-left="goBack" />
 
     <!-- 列表展示（支持拖拽） -->
     <div v-if="list.length === 0" class="empty-tip">
@@ -13,28 +9,13 @@
     </div>
 
     <div v-else class="draggable-list">
-      <van-cell-group
-        v-for="(item, index) in list"
-        :key="item.id"
-        inset
-        class="draggable-item"
-        :data-index="index"
-        @touchstart="handleDragStart($event, index)"
-        @touchmove="handleDragMove"
-        @touchend="handleDragEnd"
-        @mousedown="handleDragStart($event, index)"
-        draggable="false"
-      >
-        <van-cell
-          :title="item.schoolName"
-          :label="`${item.educationLevel} | ${item.major}`"
-          :class="[
-            'education-item',
-            { 'type-xl': item.type === 'xl', 'type-xj': item.type === 'xj' }
-          ]"
-          clickable
-          @click="editItem(index)"
-        >
+      <van-cell-group v-for="(item, index) in list" :key="item.id" inset class="draggable-item" :data-index="index"
+        @touchstart="handleDragStart($event, index)" @touchmove="handleDragMove" @touchend="handleDragEnd"
+        @mousedown="handleDragStart($event, index)" draggable="false">
+        <van-cell :title="item.schoolName" :label="`${item.educationLevel} | ${item.major}`" :class="[
+          'education-item',
+          { 'type-xl': item.type === 'xl', 'type-xj': item.type === 'xj' }
+        ]" clickable @click="editItem(index)">
           <template #right-icon>
             <span style="color: #969799; font-size: 12px; margin-right: 8px">
               {{ item.studyForm }}
@@ -48,51 +29,20 @@
     <!-- 表单弹窗 -->
     <van-popup v-model:show="showForm" position="bottom" :style="{ height: '60%' }">
       <van-form @submit="onFormSubmit">
-        <van-field
-          v-model="currentForm.schoolName"
-          name="schoolName"
-          label="学校名称"
-          placeholder="请输入学校名称"
-          :rules="[{ required: true, message: '请输入学校名称' }]"
-        />
-        <van-field
-          v-model="currentForm.educationLevel"
-          name="educationLevel"
-          label="学历层次"
-          placeholder="例如：本科、专科、硕士"
-          :rules="[{ required: true, message: '请输入学历层次' }]"
-        />
-        <van-field
-          v-model="currentForm.major"
-          name="major"
-          label="专业"
-          placeholder="请输入专业"
-          :rules="[{ required: true, message: '请输入专业' }]"
-        />
-        <van-field
-          v-model="currentForm.studyForm"
-          name="studyForm"
-          label="学习形式"
-          placeholder="例如：普通全日制、成人教育"
-          :rules="[{ required: true, message: '请输入学习形式' }]"
-        />
+        <van-field v-model="currentForm.schoolName" name="schoolName" label="学校名称" placeholder="请输入学校名称"
+          :rules="[{ required: true, message: '请输入学校名称' }]" />
+        <van-field v-model="currentForm.educationLevel" name="educationLevel" label="学历层次" placeholder="例如：本科、专科、硕士"
+          :rules="[{ required: true, message: '请输入学历层次' }]" />
+        <van-field v-model="currentForm.major" name="major" label="专业" placeholder="请输入专业"
+          :rules="[{ required: true, message: '请输入专业' }]" />
+        <van-field v-model="currentForm.studyForm" name="studyForm" label="学习形式" placeholder="例如：普通全日制、成人教育"
+          :rules="[{ required: true, message: '请输入学习形式' }]" />
 
         <div style="margin: 16px; display: flex; gap: 10px;">
-          <van-button
-            v-if="editingIndex !== null"
-            type="danger"
-            plain
-            @click="deleteItem(editingIndex)"
-            style="flex: 1"
-          >
+          <van-button v-if="editingIndex !== null" type="danger" plain @click="deleteItem(editingIndex)" style="flex: 1">
             删除
           </van-button>
-          <van-button
-            block
-            type="primary"
-            native-type="submit"
-            :style="{ flex: editingIndex !== null ? 1 : 'none' }"
-          >
+          <van-button block type="primary" native-type="submit" :style="{ flex: editingIndex !== null ? 1 : 'none' }">
             {{ editingIndex !== null ? '保存' : '确定' }}
           </van-button>
         </div>
@@ -101,24 +51,10 @@
 
     <!-- 底部两个加号按钮 -->
     <div class="add-buttons">
-      <van-button
-        round
-        type="primary"
-        icon="plus"
-        size="large"
-        @click="openForm('xl')"
-        class="add-btn xl-btn"
-      >
+      <van-button round type="primary" icon="plus" size="large" @click="openForm('xl')" class="add-btn xl-btn">
         学历
       </van-button>
-      <van-button
-        round
-        type="success"
-        icon="plus"
-        size="large"
-        @click="openForm('xj')"
-        class="add-btn xj-btn"
-      >
+      <van-button round type="success" icon="plus" size="large" @click="openForm('xj')" class="add-btn xj-btn">
         学籍
       </van-button>
     </div>
@@ -199,7 +135,7 @@ const handleDragEnd = (e) => {
 // ===== localStorage =====
 const loadFromStorage = () => {
   try {
-    const xlList = JSON.parse(localStorage.getItem('education_xl_list') || '[]');
+    const xlList = JSON.parse(localStorage.getItem('xlList') || '[]');
     const xjList = JSON.parse(localStorage.getItem('education_xj_list') || '[]');
     list.value = [...xlList, ...xjList];
   } catch (e) {
@@ -212,7 +148,7 @@ const saveToStorage = () => {
   const xlList = list.value.filter(item => item.type === 'xl');
   const xjList = list.value.filter(item => item.type === 'xj');
   try {
-    localStorage.setItem('education_xl_list', JSON.stringify(xlList));
+    localStorage.setItem('xlList', JSON.stringify(xlList));
     localStorage.setItem('education_xj_list', JSON.stringify(xjList));
   } catch (e) {
     console.error('保存失败', e);
@@ -316,6 +252,7 @@ onMounted(() => {
 .education-item.type-xl {
   border-left: 4px solid #1989fa;
 }
+
 .education-item.type-xj {
   border-left: 4px solid #07c160;
 }
