@@ -51,11 +51,11 @@ const router = useRouter();
 
 // 默认头像
 const defaultAvatar = 'https://img01.yzcdn.cn/vant/cat.jpeg';
-const defaultName ="张三"；
+const defaultName ="张三";
 
 // 响应式头像 URL
 const avatar = ref(defaultAvatar);
-const name =ref();
+const name =ref(defaultName);
 
 // 从 localStorage 读取 studentInfo
 const loadAvatar = () => {
