@@ -1,47 +1,34 @@
 <template>
   <div class="home-container">
     <!-- 顶部导航 -->
-    <van-nav-bar title="学信网"  />
+    <van-nav-bar title="学信网" />
 
     <!-- 动态区块渲染 -->
     <div v-for="block in orderedBlocks" :key="block.id" class="section">
       <!-- Banner 横幅：在线考试系统 -->
       <template v-if="block.id === '6'">
         <div class="banner-wrapper">
-          <van-image
-            :src="block.icon?.trim()"
-            fit="contain"
-            width="100%"
-            height="100%"
-          />
+          <van-image :src="block.icon?.trim()" fit="contain" width="100%" height="100%" />
         </div>
       </template>
 
       <!-- 功能区：学籍学历 / 出国服务 -->
       <template v-else>
         <h2 class="section-title">{{ block.name }}</h2>
-        <van-grid
-  :column-num="block.name.includes('出国') ? 3 : 4"
-  :gutter="10"
->
-  <van-grid-item
-    v-for="(item, idx) in block.subData || []"
-    :key="idx"
-    :text="item.name"
-    @click="goToPage(item)"
-  >
-    <template #icon>
-      <div
-        class="grid-icon"
-        :style="{ backgroundColor: item.bgHexStr || '#f0f9ff' }"
-      >
-        <img :src="(item.icon || '').trim()" alt="" />
-      </div>
-    </template>
-  </van-grid-item>
-</van-grid>
+        <van-grid :column-num="block.name.includes('出国') ? 3 : 4" :gutter="10">
+          <van-grid-item v-for="(item, idx) in block.subData || []" :key="idx" :text="item.name" @click="goToPage(item)">
+            <template #icon>
+              <div class="grid-icon" :style="{ backgroundColor: item.bgHexStr || '#f0f9ff' }">
+                <img :src="(item.icon || '').trim()" alt="" />
+              </div>
+            </template>
+          </van-grid-item>
+        </van-grid>
       </template>
     </div>
+
+    <van-button type="warning"  @click="save()">警告按钮</van-button>
+  <van-button type="default" @click="clear()">默认按钮</van-button>
 
     <!-- 底部导航 -->
     <BottomNav />
@@ -51,11 +38,45 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { onMounted, onUpdated } from 'vue'
 
 const router = useRouter()
 const activeTab = ref(0)
 
-// ========== 原始配置数据（result[0]）==========
+onMounted(() => {
+  console.log('组件挂载完成')
+})
+
+const xjList= [
+      {
+        id: 'abc123',
+        schoolName: 'xl学',
+        educationLevel: '本科',
+        major: '计算机科学与技术',
+        studyForm: '普通全日制',
+      },
+      {
+        id: 'abc124',
+        schoolName: '河北',
+        educationLevel: '本科',
+        major: '计算机科学与技术',
+        studyForm: '普通全日制',
+      },
+      {
+        id: 'abc125',
+        schoolName: '河南科技大学',
+        educationLevel: '本科',
+        major: '工程造价',
+        studyForm: '普通全日制',
+      },
+      {
+        id: 'abc126',
+        schoolName: '奥里给',
+        educationLevel: '本科',
+        major: '计算机科学与技术',
+        studyForm: '普通全日制',
+      },
+    ]
 const rawData = {
   code: '200',
   msg: '',
@@ -203,6 +224,20 @@ const goToPage = (item: any) => {
   }
 }
 
+const save =()=>{
+  try {
+        localStorage.setItem('xjList', JSON.stringify(xjList));
+        console.log('✅ 数据已保存到 localStorage');
+      } catch (e) {
+        console.error('❌ 保存失败:', e);
+      }
+}
+
+const clear=()=>{
+  localStorage.removeItem('xlList');
+  localStorage.removeItem('xjList');
+}
+
 // 图标 URL 处理（去除空格）
 const getIconUrl = (url: string) => {
   return (url || '').trim()
@@ -217,7 +252,6 @@ const handleImageError = (e: Event, item: any) => {
 </script>
 
 <style scoped>
-
 .home-container {
   padding-bottom: 50px;
   background-color: #f7f8fa;
@@ -226,9 +260,12 @@ const handleImageError = (e: Event, item: any) => {
 .section {
   margin: 10px 0;
   padding: 0 15px;
-  min-height: 80px; /* 确保有足够空间显示标题 */
-  position: relative; /* 防止子元素绝对定位覆盖 */
+  min-height: 80px;
+  /* 确保有足够空间显示标题 */
+  position: relative;
+  /* 防止子元素绝对定位覆盖 */
 }
+
 .section-title {
   font-size: 17px;
   font-weight: 600;
@@ -241,6 +278,7 @@ const handleImageError = (e: Event, item: any) => {
   width: 100%;
   line-height: 1.4;
 }
+
 .banner-wrapper {
   width: 100%;
   padding: 10px 0;
@@ -257,7 +295,8 @@ const handleImageError = (e: Event, item: any) => {
 
 /* ============ 关键：覆盖 Vant Grid 样式 ============ */
 :deep(.van-grid-item__content) {
-  padding: 10px 6px !important; /* 减少左右 padding，给文字留空间 */
+  padding: 10px 6px !important;
+  /* 减少左右 padding，给文字留空间 */
 }
 
 :deep(.van-grid-item__icon) {
@@ -273,7 +312,8 @@ const handleImageError = (e: Event, item: any) => {
   text-overflow: ellipsis !important;
   text-align: center !important;
   line-height: 1.4 !important;
-  padding: 0 2px !important; /* 微调内边距 */
+  padding: 0 2px !important;
+  /* 微调内边距 */
 }
 
 /* 针对出国服务（3列）进一步优化宽度 */
@@ -283,19 +323,25 @@ const handleImageError = (e: Event, item: any) => {
 
 /* 替换你原来的 .grid-icon 样式 */
 .grid-icon {
-  width: 40px;    /* 原为 36px 或 50px，调整到 40px */
+  width: 40px;
+  /* 原为 36px 或 50px，调整到 40px */
   height: 40px;
-  border-radius: 8px; /* 与原图一致 */
+  border-radius: 8px;
+  /* 与原图一致 */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 8px; /* 上下间距 */
-  background: #fff;   /* 确保背景白色，避免和 bgHexStr 冲突 */
+  margin: 0 auto 8px;
+  /* 上下间距 */
+  background: #fff;
+  /* 确保背景白色，避免和 bgHexStr 冲突 */
 }
 
 .grid-icon img {
-  width: 24px;    /* 图标内容缩小到 24px */
+  width: 24px;
+  /* 图标内容缩小到 24px */
   height: 24px;
-  object-fit: contain; /* 按比例缩放，不拉伸 */
+  object-fit: contain;
+  /* 按比例缩放，不拉伸 */
 }
 </style>
