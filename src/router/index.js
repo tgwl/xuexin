@@ -6,6 +6,7 @@ import XjcxView from '../views/XjcxView.vue'
 import EditView from '../views/EditView.vue' 
 import AccountView from '../views/AccountView.vue' 
 import AboutView from '../views/AboutView.vue' 
+import LogoutView from '../views/LogoutView.vue' 
 
 const routes = [
   { path: '/', component: HomeView },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/edit', component: EditView } ,
   { path: '/account', component: AccountView } ,
   { path: '/about', component: AboutView } ,
+  { path: '/logout', component: LogoutView } ,
 ]
 
 const router = createRouter({

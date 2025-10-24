@@ -19,6 +19,9 @@
         />
       </van-list>
     </van-pull-refresh>
+
+        <!-- 底部导航 -->
+        <BottomNav />
   </div>
 </template>
 
