@@ -1,28 +1,20 @@
 <template>
   <div class="page-wrapper">
     <!-- 顶部导航栏 -->
-    <van-nav-bar
-      title="学生信息"
-      left-text="返回"
-      left-arrow
-      @click-left="onBack"
-    />
+    <van-nav-bar title="学生信息" left-text="返回" left-arrow @click-left="onBack" />
 
     <!-- 表单区域 -->
     <div class="form-container">
       <!-- 照片上传区（3:4） -->
       <div class="avatar-wrapper" @click="triggerUpload">
         <div class="avatar-container">
-          <img 
-            :src="formData.avatar || defaultAvatar" 
-            class="avatar-cover"
-            alt="学生照片"
-          />
+          <img :src="formData.avatar || defaultAvatar" class="avatar-cover" alt="学生照片" />
           <div class="upload-overlay" v-if="!isEditing">点击上传</div>
         </div>
       </div>
 
       <van-form @submit="onSubmit">
+        <van-field v-model="formData.avatarCaption" label="照片标注" placeholder="输入白条上的文字，如“学生照片”" :readonly="!isEditing" />
         <van-field v-model="formData.xm" label="姓名" :readonly="!isEditing" />
         <van-field v-model="formData.xb" label="性别" :readonly="!isEditing" />
         <van-field v-model="formData.mz" label="民族" :readonly="!isEditing" />
@@ -46,13 +38,7 @@
     </div>
 
     <!-- 隐藏文件输入 -->
-    <input
-      ref="fileInput"
-      type="file"
-      accept="image/*"
-      style="display: none"
-      @change="handleFileChange"
-    />
+    <input ref="fileInput" type="file" accept="image/*" style="display: none" @change="handleFileChange" />
   </div>
 </template>
 
@@ -60,7 +46,7 @@
 import { ref, onMounted } from 'vue';
 import { showToast } from 'vant';
 import { useRouter } from 'vue-router';
-
+import { watch } from 'vue'
 // refs
 const isEditing = ref(true);
 const fileInput = ref(null);
@@ -89,20 +75,28 @@ const initialData = {
   xm: "张三",
   byrq: "2023年06月30日",
   byrqItemName: "预计毕业日期",
-  avatar: '' // 👈 新增字段
+  avatar: '', // 👈 新增字段
+  rawAvatar: '',   //修改
+  avatarCaption: '学生照片',
 };
 
 const formData = ref({ ...initialData });
+
 
 onMounted(() => {
   const saved = localStorage.getItem('studentInfo');
   if (saved) {
     try {
-      formData.value = { ...initialData, ...JSON.parse(saved) };
+      const parsed = JSON.parse(saved);
+      // 兼容旧数据：如果只有 avatar 没有 rawAvatar，暂时无法分离，可清空或提示
+      // 简单处理：若无 rawAvatar，则 avatar 保持原样（但无法动态改文字）
+      formData.value = { ...initialData, ...parsed };
     } catch (e) {
       console.warn('Failed to parse saved student info');
     }
   }
+  // 注意：watch 会在数据赋值后自动触发 regenerateAvatar
+
 });
 
 const router = useRouter();
@@ -127,17 +121,86 @@ const handleFileChange = (e) => {
 
   const reader = new FileReader();
   reader.onload = (event) => {
-    formData.value.avatar = event.target.result; // base64
-    showToast('图片已加载');
+    // 👇 只保存原始图
+    formData.value.rawAvatar = event.target.result;
+    showToast('原始图片已加载');
+    // 合成逻辑交给 watch 自动处理
   };
   reader.readAsDataURL(file);
-  e.target.value = ''; // 允许重复选择同一张图
+  e.target.value = '';
 };
 
-// 保存
+const regenerateAvatar = () => {
+  const { rawAvatar, avatarCaption } = formData.value;
+  if (!rawAvatar) {
+    formData.value.avatar = defaultAvatar;
+    return;
+  }
+
+  const img = new Image();
+  img.onerror = () => {
+    formData.value.avatar = defaultAvatar;
+    showToast('图片加载失败');
+  };
+  img.onload = () => {
+    const OUTPUT_WIDTH = 300; // 固定宽度
+    const CAPTION_HEIGHT = 20; // 白条高度
+    const MARGIN_BOTTOM = 5;   // 图片与白条之间的间距
+
+    // 计算图片缩放后高度（保持比例）
+    const scale = OUTPUT_WIDTH / img.width;
+    const IMAGE_HEIGHT = img.height * scale;
+
+    // 总高度 = 图片高 + 间距 + 白条高
+    const OUTPUT_HEIGHT = IMAGE_HEIGHT + MARGIN_BOTTOM + CAPTION_HEIGHT;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = OUTPUT_WIDTH;
+    canvas.height = OUTPUT_HEIGHT;
+
+    // 背景白色
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, OUTPUT_WIDTH, OUTPUT_HEIGHT);
+
+    // 绘制图片（居中？或顶部对齐？这里用顶部对齐）
+    ctx.drawImage(img, 0, 0, OUTPUT_WIDTH, IMAGE_HEIGHT);
+
+    // 绘制空白间距
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, IMAGE_HEIGHT, OUTPUT_WIDTH, MARGIN_BOTTOM);
+
+    // 绘制白条
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, IMAGE_HEIGHT + MARGIN_BOTTOM, OUTPUT_WIDTH, CAPTION_HEIGHT);
+
+    // 绘制文字
+    ctx.fillStyle = '#000000';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(
+      avatarCaption || '学生照片',
+      OUTPUT_WIDTH / 2,
+      IMAGE_HEIGHT + MARGIN_BOTTOM + CAPTION_HEIGHT / 2
+    );
+
+    formData.value.avatar = canvas.toDataURL('image/png');
+  };
+  img.src = rawAvatar;
+};
+// ✅ 再使用 watch
+watch(
+  () => [formData.value.rawAvatar, formData.value.avatarCaption],
+  () => {
+    regenerateAvatar();
+  },
+  { immediate: true }
+);
+//提交
 const onSubmit = () => {
   if (isEditing.value) {
-    localStorage.setItem('studentInfo', JSON.stringify(formData.value));
+    localStorage.setItem('studentInfo', JSON.stringify(formData.value)); // 包含 rawAvatar
     isEditing.value = false;
     showToast({ message: '保存成功', duration: 1500 });
   } else {
@@ -147,6 +210,25 @@ const onSubmit = () => {
 </script>
 
 <style scoped>
+.avatar-container {
+  position: relative;
+  width: 100%;
+  max-width: 160px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.avatar-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto; /* 👈 改为 auto，让图片按自身比例显示 */
+  object-fit: contain; /* 或 cover，看需求 */
+  display: block;
+}
 .page-wrapper {
   display: flex;
   flex-direction: column;
@@ -169,7 +251,8 @@ const onSubmit = () => {
 .avatar-container {
   position: relative;
   width: 100%;
-  padding-top: 133.33%; /* 3:4 = 4/3 ≈ 1.3333 */
+  padding-top: 133.33%;
+  /* 3:4 = 4/3 ≈ 1.3333 */
   border-radius: 8px;
   overflow: hidden;
   background-color: #e0e0e0;

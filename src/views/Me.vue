@@ -64,7 +64,6 @@ const loadAvatar = () => {
     try {
       const obj = JSON.parse(raw); // ✅ 先解析成对象
 
-      console.log(obj);
       avatar.value = obj.avatar || defaultAvatar;
       name.value = obj.xm || defaultName;
     } catch (e) {
