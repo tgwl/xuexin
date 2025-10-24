@@ -71,11 +71,10 @@ const onRefresh = async () => {
     if (Array.isArray(data)) {
       list.value = data // 替换为最新数据
       finished.value = false // 重置“加载完成”状态，允许继续上拉
-      Toast.success('刷新成功')
+      Toast('刷新成功')
     }
   } catch (error) {
-    console.error('刷新失败:', error)
-    Toast.fail('刷新失败')
+    Toast('加载失败')
   } finally {
     refreshing.value = false // 必须手动关闭刷新状态
   }
