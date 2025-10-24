@@ -27,9 +27,7 @@
       </template>
     </div>
 
-    <van-button type="warning"  @click="save()">警告按钮</van-button>
-  <van-button type="default" @click="clear()">默认按钮</van-button>
-
+ 
     <!-- 底部导航 -->
     <BottomNav />
   </div>
@@ -224,19 +222,6 @@ const goToPage = (item: any) => {
   }
 }
 
-const save =()=>{
-  try {
-        localStorage.setItem('xjList', JSON.stringify(xjList));
-        console.log('✅ 数据已保存到 localStorage');
-      } catch (e) {
-        console.error('❌ 保存失败:', e);
-      }
-}
-
-const clear=()=>{
-  localStorage.removeItem('xlList');
-  localStorage.removeItem('xjList');
-}
 
 // 图标 URL 处理（去除空格）
 const getIconUrl = (url: string) => {

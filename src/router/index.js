@@ -5,7 +5,7 @@ import MeView from '../views/Me.vue'
 import XjcxView from '../views/XjcxView.vue' 
 import EditView from '../views/EditView.vue' 
 import AccountView from '../views/AccountView.vue' 
-
+import AboutView from '../views/AboutView.vue' 
 
 const routes = [
   { path: '/', component: HomeView },
@@ -13,7 +13,8 @@ const routes = [
   { path: '/me', component: MeView },
   { path: '/xjcx', component: XjcxView } ,
   { path: '/edit', component: EditView } ,
-  { path: '/account', component: AccountView } 
+  { path: '/account', component: AccountView } ,
+  { path: '/about', component: AboutView } ,
 ]
 
 const router = createRouter({
