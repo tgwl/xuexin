@@ -1,9 +1,7 @@
-# netlify.toml
 [build]
-  functions = "netlify/functions"   
-  publish = "dist"                 
+  functions = "netlify/functions"
+  publish = "dist"
 
-# 本地开发时启用函数模拟
 [dev]
   functions = "netlify/functions"
   publish = "dist"
