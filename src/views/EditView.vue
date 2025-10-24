@@ -1,39 +1,49 @@
 <template>
   <div class="education-page">
-
+    <!-- 顶部导航栏 -->
     <van-nav-bar
       title="教育信息"
       left-arrow
       @click-left="goBack"
     />
 
-
-    <!-- 列表展示 -->
+    <!-- 列表展示（支持拖拽） -->
     <div v-if="list.length === 0" class="empty-tip">
       暂无数据，点击底部“+”添加学历或学籍信息
     </div>
 
-    <van-cell-group v-else inset>
-      <van-cell
+    <div v-else class="draggable-list">
+      <van-cell-group
         v-for="(item, index) in list"
         :key="item.id"
-        :title="item.schoolName"
-        :label="`${item.educationLevel} | ${item.major}`"
-        :class="[
-          'education-item',
-          { 'type-xl': item.type === 'xl', 'type-xj': item.type === 'xj' }
-        ]"
-        clickable
-        @click="editItem(index)"
+        inset
+        class="draggable-item"
+        :data-index="index"
+        @touchstart="handleDragStart($event, index)"
+        @touchmove="handleDragMove"
+        @touchend="handleDragEnd"
+        @mousedown="handleDragStart($event, index)"
+        draggable="false"
       >
-        <template #right-icon>
-          <span style="color: #969799; font-size: 12px; margin-right: 8px">
-            {{ item.studyForm }}
-          </span>
-          <van-icon name="delete" color="#ee0a24" @click.stop="deleteItem(index)" />
-        </template>
-      </van-cell>
-    </van-cell-group>
+        <van-cell
+          :title="item.schoolName"
+          :label="`${item.educationLevel} | ${item.major}`"
+          :class="[
+            'education-item',
+            { 'type-xl': item.type === 'xl', 'type-xj': item.type === 'xj' }
+          ]"
+          clickable
+          @click="editItem(index)"
+        >
+          <template #right-icon>
+            <span style="color: #969799; font-size: 12px; margin-right: 8px">
+              {{ item.studyForm }}
+            </span>
+            <van-icon name="delete" color="#ee0a24" @click.stop="deleteItem(index)" />
+          </template>
+        </van-cell>
+      </van-cell-group>
+    </div>
 
     <!-- 表单弹窗 -->
     <van-popup v-model:show="showForm" position="bottom" :style="{ height: '60%' }">
@@ -119,6 +129,12 @@
 import { ref, reactive, onMounted } from 'vue';
 import { showToast } from 'vant';
 
+// ===== 返回 =====
+const goBack = () => {
+  history.back();
+};
+
+// ===== 数据 =====
 const list = ref([]);
 
 // 表单相关
@@ -132,65 +148,111 @@ const currentForm = reactive({
   studyForm: ''
 });
 
-// 从 localStorage 读取数据
+// ===== 拖拽状态 =====
+let dragStartIndex = null;
+let isDragging = false;
+
+// ===== 拖拽事件 =====
+const handleDragStart = (e, index) => {
+  dragStartIndex = index;
+  isDragging = true;
+  // 移动端防止滚动
+  if (e.type === 'touchstart') {
+    e.preventDefault();
+  }
+};
+
+const handleDragMove = (e) => {
+  if (!isDragging || dragStartIndex === null) return;
+  e.preventDefault(); // 阻止默认滚动
+};
+
+const handleDragEnd = (e) => {
+  if (!isDragging || dragStartIndex === null) return;
+  isDragging = false;
+
+  // 获取当前手指/鼠标位置
+  const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+  const elements = document.querySelectorAll('.draggable-item');
+  let dragEndIndex = dragStartIndex;
+
+  // 计算目标位置
+  for (let i = 0; i < elements.length; i++) {
+    const rect = elements[i].getBoundingClientRect();
+    if (clientY < rect.top + rect.height / 2) {
+      dragEndIndex = i;
+      break;
+    }
+  }
+
+  // 如果位置变化，交换
+  if (dragStartIndex !== dragEndIndex) {
+    const newList = [...list.value];
+    const movedItem = newList.splice(dragStartIndex, 1)[0];
+    newList.splice(dragEndIndex, 0, movedItem);
+    list.value = newList;
+    saveToStorage(); // 保存到 localStorage
+    showToast('排序已更新');
+  }
+};
+
+// ===== localStorage =====
 const loadFromStorage = () => {
   try {
-    const xlList = JSON.parse(localStorage.getItem('xlList') || '[]');
-    const xjList = JSON.parse(localStorage.getItem('xjList') || '[]');
-    // 合并：学历在前，学籍在后
+    const xlList = JSON.parse(localStorage.getItem('education_xl_list') || '[]');
+    const xjList = JSON.parse(localStorage.getItem('education_xj_list') || '[]');
     list.value = [...xlList, ...xjList];
   } catch (e) {
-    console.error('读取 localStorage 失败', e);
+    console.error('读取失败', e);
     list.value = [];
   }
 };
 
-// 保存到 localStorage
 const saveToStorage = () => {
   const xlList = list.value.filter(item => item.type === 'xl');
   const xjList = list.value.filter(item => item.type === 'xj');
   try {
-    localStorage.setItem('xlList', JSON.stringify(xlList));
-    localStorage.setItem('xjList', JSON.stringify(xjList));
+    localStorage.setItem('education_xl_list', JSON.stringify(xlList));
+    localStorage.setItem('education_xj_list', JSON.stringify(xjList));
   } catch (e) {
-    console.error('保存到 localStorage 失败', e);
-    showToast('保存失败，请检查存储空间');
+    console.error('保存失败', e);
   }
 };
 
-// 打开表单（新增）
+// ===== 表单逻辑（保持不变）=====
 const openForm = (type) => {
   editingIndex.value = null;
   currentFormType.value = type;
-  currentForm.schoolName = '';
-  currentForm.educationLevel = '';
-  currentForm.major = '';
-  currentForm.studyForm = '';
+  Object.assign(currentForm, {
+    schoolName: '',
+    educationLevel: '',
+    major: '',
+    studyForm: ''
+  });
   showForm.value = true;
 };
 
-// 编辑项
 const editItem = (index) => {
   editingIndex.value = index;
   const item = list.value[index];
   currentFormType.value = item.type;
-  currentForm.schoolName = item.schoolName || '';
-  currentForm.educationLevel = item.educationLevel || '';
-  currentForm.major = item.major || '';
-  currentForm.studyForm = item.studyForm || '';
+  Object.assign(currentForm, {
+    schoolName: item.schoolName || '',
+    educationLevel: item.educationLevel || '',
+    major: item.major || '',
+    studyForm: item.studyForm || ''
+  });
   showForm.value = true;
 };
 
-// 提交表单
 const onFormSubmit = () => {
   const { schoolName, educationLevel, major, studyForm } = currentForm;
   if (!schoolName || !educationLevel || !major || !studyForm) {
-    showToast('请填写完整信息');
+    showToast('请填写完整');
     return;
   }
 
   if (editingIndex.value !== null) {
-    // 更新
     list.value[editingIndex.value] = {
       ...list.value[editingIndex.value],
       schoolName,
@@ -200,44 +262,30 @@ const onFormSubmit = () => {
     };
     showToast('更新成功');
   } else {
-    // 新增
-    const newItem = {
+    list.value.push({
       id: Date.now().toString(),
       type: currentFormType.value,
       schoolName,
       educationLevel,
       major,
       studyForm
-    };
-    list.value.push(newItem);
+    });
     showToast('添加成功');
   }
-
-  saveToStorage(); // 保存到 localStorage
+  saveToStorage();
   showForm.value = false;
 };
 
-// 删除项
 const deleteItem = (index) => {
   list.value.splice(index, 1);
   showToast('已删除');
-  saveToStorage(); // 保存到 localStorage
+  saveToStorage();
   showForm.value = false;
 };
 
-// 页面加载时读取数据
 onMounted(() => {
   loadFromStorage();
 });
-
-//返回页面
-const goBack = () => {
-  // 如果你使用 Vue Router
-  // router.go(-1); 
-// 
-  // 如果你没有用 Vue Router（纯静态页面）
-  history.back();
-};
 </script>
 
 <style scoped>
@@ -248,7 +296,21 @@ const goBack = () => {
 .empty-tip {
   text-align: center;
   color: #969799;
-  padding: 40px 20px;
+  padding: 40px 20px 0;
+}
+
+.draggable-list {
+  padding: 0 12px;
+}
+
+.draggable-item {
+  margin-bottom: 8px;
+  cursor: grab;
+  user-select: none;
+}
+
+.draggable-item:active {
+  cursor: grabbing;
 }
 
 .education-item.type-xl {

@@ -1150,6 +1150,20 @@
       text-overflow: ellipsis;
     }
 
+    .text-span {
+      
+  color: #999;
+
+  padding: 10px 20px; /* 上下15px，左右20px（可按需调整） */
+  margin-top: -20px;
+
+  /* 2. 缩小行间距（第二行与第一行的距离） */
+  line-height: 1.5; /* 默认行高约1.5，调小至1.2-1.3更紧凑 */
+
+  /* 3. 限制容器宽度（确保文本换行，才能看到行间距效果） */
+  width: 300px; /* 例如限制宽度为300px，文本会自动换行 */
+
+}
     /* 去除滚动条 */
     html {
       scrollbar-width: none;
@@ -1283,21 +1297,34 @@
         </div>
         <div class="find-xjxl-bottom"><span class="colorGreen">提示信息 <i title="展开" class="iconfont"></i></span></div>
       </div>
+
+
       <div class="list-tit van-row">
         <div class="l van-col van-col--24">考研信息
           <!---->
         </div>
       </div>
-      <div class="no-data list-card">
-        <div class="yxmc">您没有考研信息！</div>
-        <div class="des">您目前没有考研信息，系统提供2006年以来入学的硕士研究生报名和成绩数据。</div>
+    
+      
+      <div class="no-data">
+        <h4 style="padding: 0px 0.3rem;">您没有考研信息！<a href="https://www.chsi.com.cn/help/cxfw.jsp"
+            target="_blank"><i title="查看" class="iconfont"></i></a></h4>
+
+
+        <div class="text-span">您目前没有考研信息，系统提供2006年以来入学的硕士研究生报名和成绩数据。</div>
+     
       </div>
       <!---->
       <!---->
+
+     <!---->
       <!---->
       <!---->
       <!---->
-      <!---->
+
+      
+
+
       <div class="van-dialog" style="display: none;">
         <!---->
         <div class="van-dialog__content">
