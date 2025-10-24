@@ -136,7 +136,7 @@ const handleDragEnd = (e) => {
 const loadFromStorage = () => {
   try {
     const xlList = JSON.parse(localStorage.getItem('xlList') || '[]');
-    const xjList = JSON.parse(localStorage.getItem('education_xj_list') || '[]');
+    const xjList = JSON.parse(localStorage.getItem('xjList') || '[]');
     list.value = [...xlList, ...xjList];
   } catch (e) {
     console.error('读取失败', e);
@@ -149,7 +149,7 @@ const saveToStorage = () => {
   const xjList = list.value.filter(item => item.type === 'xj');
   try {
     localStorage.setItem('xlList', JSON.stringify(xlList));
-    localStorage.setItem('education_xj_list', JSON.stringify(xjList));
+    localStorage.setItem('xjList', JSON.stringify(xjList));
   } catch (e) {
     console.error('保存失败', e);
   }
