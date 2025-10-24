@@ -2,9 +2,7 @@
   <div class="news-page">
     <van-nav-bar title="新闻" fixed />
 
-    <!-- 下拉刷新容器 -->
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <!-- 上拉加载列表 -->
       <van-list
         v-model:loading="loading"
         :finished="finished"
@@ -25,15 +23,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Toast } from 'vant'
 
 const list = ref([])
-const loading = ref(false) // 上拉加载状态
+const loading = ref(false)
 const finished = ref(false)
-const refreshing = ref(false) // 下拉刷新状态
+const refreshing = ref(false)
 
-// 格式化时间显示
 const formatTime = (displayOn) => {
   if (!displayOn || displayOn.length !== 14) return ''
   const month = displayOn.slice(4, 6)
@@ -44,12 +41,10 @@ const formatTime = (displayOn) => {
   return `${month}-${day} ${hh}:${mm}:${ss}`
 }
 
-// 跳转外部链接
 const goToUrl = (url) => {
   if (url) window.open(url, '_blank')
 }
 
-// 生成当前时间字符串（YYYYMMDDHHmmss）
 const getCurrentOn = () => {
   const now = new Date()
   const y = now.getFullYear()
@@ -61,60 +56,74 @@ const getCurrentOn = () => {
   return `${y}${m}${d}${h}${min}${s}`
 }
 
-// 【新增】下拉刷新：获取最新数据
-const onRefresh = async () => {
+// 加载数据（通用函数）
+const fetchData = async (onParam) => {
+  const res = await fetch(`/.netlify/functions/news?ope=old&size=10&on=${onParam}`)
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  const data = await res.json()
+  if (!Array.isArray(data)) throw new Error('返回数据不是数组')
+  return data
+}
+
+// 首次加载 & 刷新
+const loadInitialData = async () => {
   try {
     const onParam = getCurrentOn()
-    const res = await fetch(`/.netlify/functions/news?ope=old&size=10&on=${onParam}`)
-    const data = await res.json()
-
-    if (Array.isArray(data)) {
-      list.value = data // 替换为最新数据
-      finished.value = false // 重置“加载完成”状态，允许继续上拉
-      Toast('刷新成功')
-    }
+    const data = await fetchData(onParam)
+    list.value = data
+    finished.value = false
   } catch (error) {
+    console.error('加载失败:', error)
     Toast('加载失败')
+    finished.value = true
+  }
+}
+
+// 页面初始化时加载
+onMounted(() => {
+  loadInitialData()
+})
+
+// 下拉刷新
+const onRefresh = async () => {
+  try {
+    await loadInitialData()
+    Toast('刷新成功')
+  } catch (error) {
+    Toast('刷新失败')
   } finally {
-    refreshing.value = false // 必须手动关闭刷新状态
+    refreshing.value = false
   }
 }
 
 // 上拉加载更多
 const onLoad = async () => {
-  if (list.value.length === 0) {
-    // 如果列表为空（比如刚刷新后又触发 onLoad），先加载最新数据
-    await onRefresh()
-    loading.value = false
-    return
-  }
+  if (finished.value) return
 
   const lastItem = list.value[list.value.length - 1]
-  const onParam = lastItem?.displayOn
-
-  if (!onParam) {
+  if (!lastItem?.displayOn) {
     loading.value = false
+    finished.value = true
     return
   }
 
   try {
-    const res = await fetch(`/.netlify/functions/news?ope=old&size=10&on=${onParam}`)
-    const data = await res.json()
-
-    if (Array.isArray(data) && data.length > 0) {
+    const data = await fetchData(lastItem.displayOn)
+    if (data.length > 0) {
       list.value.push(...data)
     } else {
       finished.value = true
+      Toast('没有更多数据了')
     }
   } catch (error) {
     console.error('加载更多失败:', error)
     Toast('加载失败')
+    finished.value = true
   } finally {
     loading.value = false
   }
 }
 </script>
-
 
 <style scoped>
 .news-page {
