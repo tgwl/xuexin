@@ -142,6 +142,10 @@ const onLoad = async () => {
 </script>
 
 <style scoped>
+
+:deep(.van-cell__right-icon) {
+  display: none !important;
+}
 .news-page {
   padding-top: 46px;
   background-color: #f7f8fa;
