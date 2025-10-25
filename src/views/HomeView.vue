@@ -189,7 +189,7 @@ const goToPage = (item: any) => {
 <style scoped>
 
 .section-title {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  font-family: 'Noto Sans SC', sans-serif;
   font-weight: 700;
 }
 .home-container {

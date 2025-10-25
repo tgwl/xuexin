@@ -18,7 +18,7 @@
 
         <van-cell title="简介" label="一个轻量级的学生信息管理工具，支持表单填写、本地保存与编辑。" readonly />
         <van-cell title="联系开发者" value="煜" is-link @click="showConfirmDialog" />
-        <van-cell title="部署平台" value="Netlify + Vercel + CloudPage" readonly />
+        <van-cell title="部署平台" value="Netlify Vercel CloudPage" readonly />
         <van-cell title="技术栈" value="Vue 3 + Vant 4 " readonly />
         <!-- 👇 新增反馈入口 -->
         <van-cell title="问题反馈" label="点击填写在线反馈表单" is-link @click="openFeedbackForm" />
