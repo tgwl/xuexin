@@ -1,119 +1,114 @@
 <template>
-  <div class="about-page">
+  <div class="about-guide-page">
     <!-- 顶部导航 -->
-    <van-nav-bar title="关于" left-arrow @click-left="goBack" fixed />
+    <van-nav-bar title="关于与使用" left-arrow @click-left="goBack" fixed />
 
     <div class="content">
-      <!-- 应用信息区 -->
-      <div class="app-info-card">
-        <div class="app-icon">🎓</div>
-        <div class="app-text">
-          <h2 class="app-name">学生信息助手</h2>
-          <p class="app-version">v1.3.0</p>
-        </div>
-      </div>
-
-      <!-- 功能列表 -->
-      <div class="section">
-        <h3 class="section-title">基本信息</h3>
-        <div class="info-list">
-          <div class="info-item">
-            <span class="label">简介</span>
-            <span class="value">一个轻量级的学生信息管理工具，支持表单填写、本地保存与编辑。</span>
-          </div>
-          <div class="info-item">
-            <span class="label">联系开发者</span>
-            <span class="value clickable" @click="showConfirmDialog">煜</span>
-          </div>
-          <div class="info-item">
-            <span class="label">部署平台</span>
-            <span class="value">Netlify + Vercel + CloudPage</span>
-          </div>
-          <div class="info-item">
-            <span class="label">技术栈</span>
-            <span class="value">Vue 3 + Vant 4</span>
+      <!-- 应用信息（始终显示） -->
+      <div class="card app-card">
+        <div class="app-header">
+          <div class="app-icon">🎓</div>
+          <div>
+            <h1 class="app-name">学生信息助手</h1>
+            <p class="app-version">v1.3.0</p>
           </div>
         </div>
       </div>
 
-      <!-- 当前站点 -->
-      <div class="section">
-        <h3 class="section-title">当前站点</h3>
-        <div class="domain-cards">
-          <a
-            v-for="domain in domains"
-            :key="domain.url"
-            :href="domain.url"
-            target="_blank"
-            class="domain-card"
-          >
-            <span class="domain-icon">🌐</span>
-            <span class="domain-text">{{ domain.name }}</span>
-          </a>
-        </div>
+      <div class="card intro-card">
+        <h2 class="section-title">📖 项目简介</h2>
+        <p class="intro-text">
+          「学生信息助手」是一款轻量级的个人学业信息管理工具，专为在校学生或毕业生设计。支持记录学籍、学历、学位等关键信息，并可在多设备间通过手动同步（如截图或笔记）进行备份。
+        </p>
       </div>
 
-      <!-- 反馈入口 -->
-      <div class="section">
-        <h3 class="section-title">帮助与反馈</h3>
-        <div class="feedback-btn" @click="openFeedbackForm">
-          <span>📝 填写在线反馈表单</span>
-          <van-icon name="arrow" size="16" />
-        </div>
-      </div>
-
-      <!-- 更新日志 -->
-      <div class="section">
-        <h3 class="section-title">更新日志</h3>
-        <div class="changelog">
-          <div
-            v-for="entry in changelog"
-            :key="entry.version"
-            class="changelog-entry"
-          >
-            <div class="version-header">
-              <span class="version">v{{ entry.version }}</span>
-              <span class="date">{{ formatDate(entry.date) }}</span>
+      <!-- 可折叠内容 -->
+      <van-collapse v-model="activeName" accordion>
+        <!-- 使用说明 -->
+        <van-collapse-item name="usage" title="🚀 使用说明">
+          <div class="steps">
+            <div class="step" v-for="(step, i) in steps" :key="i">
+              <span class="step-num">{{ i + 1 }}</span>
+              <span class="step-text">{{ step }}</span>
             </div>
-            <ul class="changes-list">
-              <li
-                v-for="(change, index) in entry.changes"
-                :key="index"
-                class="change-item"
-              >
-                <van-tag :type="getTagType(change.type)" size="mini" round>
-                  {{ getTagText(change.type) }}
+          </div>
+        </van-collapse-item>
+
+        <!-- 注意事项 -->
+        <van-collapse-item name="notes" title="⚠️ 注意事项">
+          <ul class="note-list">
+            <li>数据通过 <code>localStorage</code> 保存，刷新页面不会丢失。</li>
+            <li>请勿在公共或共享设备上使用，避免他人查看您的信息。</li>
+            <li>不同部署站点（Netlify / Vercel / Cloudflare Pages）数据<strong>不互通</strong>，建议固定使用一个域名。</li>
+            <li>如需清除所有数据，请在浏览器中手动清除该站点的本地存储。</li>
+            <li><strong>访问限制说明</strong>：
+              <ul class="sub-list">
+                <li><strong>Netlify</strong>：有流量配额限制，高峰期可能无法访问；</li>
+                <li><strong>Vercel</strong>：主要面向境外网络，国内访问可能不稳定；</li>
+                <li><strong>Cloudflare Pages</strong>：国内访问更稳定，推荐优先使用。</li>
+              </ul>
+            </li>
+          </ul>
+        </van-collapse-item>
+
+        <!-- 常见问题 -->
+        <van-collapse-item name="faq" title="❓ 常见问题">
+          <van-cell v-for="(faq, i) in faqs" :key="i" :title="faq.q" :value="faq.a" />
+        </van-collapse-item>
+
+        <!-- 当前站点 -->
+        <van-collapse-item name="sites" title="🌐 当前可用站点">
+          <div class="domain-grid">
+            <a v-for="site in sites" :key="site.url" :href="site.url.trim()" target="_blank" class="domain-card">
+              {{ site.name }}
+              <van-icon name="arrow" size="14" class="domain-arrow" />
+            </a>
+          </div>
+        </van-collapse-item>
+
+        <!-- 更新日志 -->
+        <van-collapse-item name="changelog" title="📈 最近更新">
+          <div class="log-entry" v-for="log in recentLogs" :key="log.version">
+            <div class="log-header">
+              <span class="log-version">v{{ log.version }}</span>
+              <span class="log-date">{{ formatDate(log.date) }}</span>
+            </div>
+            <ul class="log-list">
+              <li v-for="(item, idx) in log.changes" :key="idx">
+                <van-tag :type="getTagType(item.type)" size="mini" round>
+                  {{ getTagText(item.type) }}
                 </van-tag>
-                <span>{{ change.desc }}</span>
+                {{ item.desc }}
               </li>
             </ul>
           </div>
+        </van-collapse-item>
+      </van-collapse>
+
+      <!-- 联系与反馈（始终显示） -->
+      <div class="card feedback-card">
+        <h2 class="section-title">📬 联系与反馈</h2>
+        <div class="feedback-actions">
+          <van-button type="primary" block @click="openFeedbackForm">📝 填写反馈表单</van-button>
+          <van-button plain type="info" block @click="showConfirmDialog" style="margin-top: 12px">
+            💬 联系开发者（微信）
+          </van-button>
         </div>
       </div>
 
-      <!-- 底部版权 -->
-      <div class="footer">
-        © {{ new Date().getFullYear() }} 学生信息助手
-      </div>
+      <div class="footer">© {{ new Date().getFullYear() }} 学生信息助手</div>
     </div>
 
     <!-- 联系确认对话框 -->
-    <van-dialog
-      v-model:show="showDialog"
-      title="联系开发者"
-      show-cancel-button
-      confirm-button-text="确定"
-      cancel-button-text="取消"
-      @confirm="showQRCode"
-      @cancel="showDialog = false"
-    >
-      <p class="dialog-content">是否联系开发者？</p>
+    <van-dialog v-model:show="showDialog" title="联系开发者" show-cancel-button confirm-button-text="显示二维码"
+      cancel-button-text="取消" @confirm="showQRCode" @cancel="showDialog = false">
+      <p class="dialog-text">是否查看微信联系二维码？</p>
     </van-dialog>
 
     <!-- 二维码弹层 -->
     <van-overlay :show="showQR" @click="showQR = false">
       <div class="qr-container" @click.stop>
-        <van-image :src="wechatQRCode" width="240" height="240" fit="contain" radius="12" />
+        <van-image :src="wechatQRCode" width="220" height="220" fit="contain" radius="12" />
         <div class="qr-tip">长按保存二维码，微信扫码联系</div>
       </div>
     </van-overlay>
@@ -121,18 +116,15 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
 import { ref } from 'vue'
-import { Dialog } from 'vant'
+import { useRouter } from 'vue-router'
+
 
 const router = useRouter()
-
 const FEEDBACK_FORM_URL = 'https://www.wjx.cn/vm/YxTypie.aspx#'
+const wechatQRCode = '/wechat-qr.png'
 
-const openFeedbackForm = () => {
-  window.open(FEEDBACK_FORM_URL, '_blank')
-}
-
+const activeName = ref('usage')
 const goBack = () => {
   if (window.history.length > 1) {
     router.go(-1)
@@ -141,29 +133,38 @@ const goBack = () => {
   }
 }
 
-const wechatQRCode = '/wechat-qr.png'
-
-const showDialog = ref(false)
-const showQR = ref(false)
-
-const showConfirmDialog = () => {
-  showDialog.value = true
+const openFeedbackForm = () => {
+  window.open(FEEDBACK_FORM_URL, '_blank')
 }
 
-const showQRCode = () => {
-  showDialog.value = false
-  showQR.value = true
-}
+// 默认展开：仅“使用说明”
+const activeNames = ref(['usage'])
 
-// 域名列表（可自定义）
-const domains = [
+// 站点列表
+const sites = [
   { name: 'Netlify 部署', url: 'https://xuexin.netlify.app/' },
   { name: 'Vercel 部署', url: 'https://xuexin-dusky.vercel.app/' },
-  { name: 'CloudPage 部署', url: 'https://xuexin.pages.dev/#/' }
+  { name: 'Cloudflare Pages', url: 'https://xuexin.pages.dev/#/' }
+]
+
+// 使用步骤
+const steps = [
+  '在「我的」页面点击头像，编辑个人信息或上传头像',
+  '在「我的」→“退出登录”区域，编辑教育相关信息',
+  '填写完成后点击“保存”，数据将自动存入浏览器',
+  '下次访问同一域名时，信息会自动加载'
+]
+
+// 常见问题
+const faqs = [
+  { q: '数据会上传到服务器吗？', a: '不会。所有数据仅保存在您当前浏览器的 localStorage 中，完全本地化。' },
+  { q: '换域名后数据还在吗？', a: '不在。不同域名被视为不同站点，浏览器数据隔离，无法共享。' },
+  { q: '如何清除所有信息？', a: '在浏览器设置中清除该站点的 Cookie 与本地存储即可。' },
+  { q: '支持手机使用吗？', a: '支持！页面已适配移动端，可在手机浏览器中正常使用。' }
 ]
 
 // 更新日志
-const changelog = [
+const recentLogs = [
   {
     version: '1.3.0',
     date: '2025-10-25',
@@ -180,246 +181,248 @@ const changelog = [
       { type: 'feature', desc: '新增信息修改功能入口' },
       { type: 'improvement', desc: '优化表单编辑体验与数据同步机制' }
     ]
-  },
-  {
-    version: '1.1.0',
-    date: '2025-10-23',
-    changes: [
-      { type: 'feature', desc: '实现基础信息修改功能' },
-      { type: 'fix', desc: '修复页面布局错乱问题' }
-    ]
   }
 ]
 
+// 工具函数
 const formatDate = (dateStr) => {
-  const date = new Date(dateStr)
-  return `${date.getMonth() + 1}月${date.getDate()}日`
+  const d = new Date(dateStr)
+  return `${d.getMonth() + 1}月${d.getDate()}日`
 }
 
 const getTagText = (type) => {
-  const map = {
-    feature: '新增',
-    improvement: '优化',
-    fix: '修复',
-    perf: '性能'
-  }
+  const map = { feature: '新增', improvement: '优化', fix: '修复', perf: '性能' }
   return map[type] || '更新'
 }
 
 const getTagType = (type) => {
-  const map = {
-    feature: 'success',
-    improvement: 'primary',
-    fix: 'danger',
-    perf: 'warning'
-  }
+  const map = { feature: 'success', improvement: 'primary', fix: 'danger', perf: 'warning' }
   return map[type] || 'default'
+}
+
+// 微信联系
+const showDialog = ref(false)
+const showQR = ref(false)
+
+const showConfirmDialog = () => {
+  showDialog.value = true
+}
+
+const showQRCode = () => {
+  showDialog.value = false
+  showQR.value = true
 }
 </script>
 
 <style scoped>
-.about-page {
+.intro-card {
+  margin-bottom: 16px;
+}
+
+.intro-text {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.about-guide-page {
   padding-top: 46px;
   min-height: 100vh;
-  background-color: #f7f8fa;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .content {
-  padding: 20px 16px 32px;
+  padding: 16px;
 }
 
-/* 应用信息卡 */
-.app-info-card {
-  display: flex;
-  align-items: center;
+.card {
   background: white;
   border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.app-card {
+  margin-bottom: 16px;
+}
+
+.feedback-card {
+  margin-top: 16px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .app-icon {
   font-size: 32px;
-  color: #1890ff;
-  margin-right: 16px;
+  color: #3b82f6;
 }
 
 .app-name {
   font-size: 20px;
-  font-weight: bold;
-  color: #333;
+  font-weight: 700;
+  color: #1e293b;
   margin: 0;
 }
 
 .app-version {
   font-size: 14px;
-  color: #999;
-  margin: 4px 0 0;
-}
-
-/* 区块标题 */
-.section {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: #64748b;
+  margin-top: 4px;
 }
 
 .section-title {
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #1e293b;
   margin: 0 0 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #eee;
 }
 
-/* 信息列表 */
-.info-list {
+/* 步骤 */
+.steps {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
-.info-item {
+.step {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  gap: 12px;
 }
 
-.info-item:last-child {
-  border-bottom: none;
-}
-
-.label {
-  font-weight: 500;
-  color: #666;
-  min-width: 80px;
-}
-
-.value {
-  flex: 1;
-  text-align: right;
-  color: #333;
+.step-num {
+  flex: 0 0 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 50%;
+  font-weight: bold;
   font-size: 14px;
 }
 
-.clickable {
-  color: #1890ff;
-  cursor: pointer;
-  text-decoration: underline;
+.step-text {
+  flex: 1;
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.5;
 }
 
-/* 域名卡片 */
-.domain-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+/* 注意事项 */
+.note-list {
+  padding-left: 20px;
+  margin: 0;
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.7;
+}
+
+.note-list li {
+  margin-bottom: 10px;
+}
+
+.sub-list {
+  margin-top: 8px;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.sub-list li {
+  margin-bottom: 6px;
+}
+
+code {
+  background: #f1f5f9;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* 站点卡片 */
+.domain-grid {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
 .domain-card {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  background: #e6f7ff;
-  color: #1890ff;
-  border-radius: 12px;
-  text-decoration: none;
-  font-size: 14px;
-  transition: all 0.2s ease;
-  text-align: center;
-  line-height: 1.4;
-}
-
-.domain-card:hover {
-  background: #bae7ff;
-  transform: translateY(-2px);
-}
-
-.domain-icon {
-  margin-right: 8px;
-  font-size: 16px;
-}
-
-/* 反馈按钮 */
-.feedback-btn {
-  display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  background: #fafafa;
-  border: 1px solid #e0e0e0;
+  padding: 12px 16px;
+  background: #f8fafc;
   border-radius: 12px;
-  cursor: pointer;
+  text-decoration: none;
+  color: #1e293b;
+  font-size: 14px;
   transition: background 0.2s;
 }
 
-.feedback-btn:hover {
-  background: #f5f5f5;
+.domain-card:hover {
+  background: #eef2ff;
 }
 
-.feedback-btn span {
-  font-size: 14px;
-  color: #333;
+.domain-arrow {
+  color: #94a3b8;
 }
 
 /* 更新日志 */
-.changelog-entry {
-  margin-bottom: 24px;
+.log-entry {
+  margin-bottom: 20px;
 }
 
-.version-header {
+.log-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
-.version {
-  font-weight: bold;
-  color: #333;
-  font-size: 16px;
+.log-version {
+  font-weight: 600;
+  color: #1e293b;
 }
 
-.date {
-  font-size: 12px;
-  color: #999;
+.log-date {
+  color: #94a3b8;
 }
 
-.changes-list {
+.log-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.change-item {
+.log-list li {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  padding: 8px 0;
+  padding: 6px 0;
   font-size: 14px;
-  color: #333;
+  color: #334155;
   line-height: 1.5;
 }
 
-.change-item .van-tag {
+.log-list li .van-tag {
   margin-top: 2px;
 }
 
-/* 对话框 & 二维码 */
-.dialog-content {
-  text-align: center;
-  padding: 16px;
-  font-size: 16px;
-  color: #333;
+/* 反馈按钮 */
+.feedback-actions {
+  margin-top: 12px;
 }
 
+/* 二维码 */
 .qr-container {
   display: flex;
   flex-direction: column;
@@ -432,25 +435,30 @@ const getTagType = (type) => {
   background: white;
   padding: 24px;
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   z-index: 1000;
 }
 
 .qr-tip {
   margin-top: 12px;
   font-size: 14px;
-  color: #666;
+  color: #64748b;
   text-align: center;
   line-height: 1.4;
 }
 
-/* 底部版权 */
+.dialog-text {
+  text-align: center;
+  padding: 16px;
+  color: #334155;
+}
+
 .footer {
   text-align: center;
   font-size: 12px;
-  color: #999;
-  margin-top: 32px;
+  color: #94a3b8;
+  margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #e2e8f0;
 }
 </style>
