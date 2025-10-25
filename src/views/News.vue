@@ -22,7 +22,7 @@
           :title="item.title"
           :label="formatTime(item.displayOn)"
           is-link
-          :arrow="false"
+          :arrow=false
           @click="goToUrl(item.url)"
         />
       </van-list>
