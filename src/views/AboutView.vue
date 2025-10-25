@@ -4,80 +4,133 @@
     <van-nav-bar title="关于" left-arrow @click-left="goBack" fixed />
 
     <div class="content">
-      <!-- 关于信息 -->
-      <van-cell-group class="about-section">
-        <van-cell center>
-          <template #icon>
-            <div class="app-icon">🎓</div>
-          </template>
-          <template #title>
-            <div class="app-name">学生信息助手</div>
-            <div class="app-version">v1.3.0</div>
-          </template>
-        </van-cell>
-
-        <van-cell title="简介" label="一个轻量级的学生信息管理工具，支持表单填写、本地保存与编辑。" readonly />
-        <van-cell title="联系开发者" value="煜" is-link @click="showConfirmDialog" />
-        <van-cell title="部署平台" value="Netlify Vercel CloudPage" readonly />
-        <van-cell title="技术栈" value="Vue 3 + Vant 4 " readonly />
-        <!-- 👇 新增反馈入口 -->
-        <van-cell title="问题反馈" label="点击填写在线反馈表单" is-link @click="openFeedbackForm" />
-      </van-cell-group>
-
-      <van-dialog v-model:show="showDialog" title="联系开发者" show-cancel-button confirm-button-text="确定"
-        cancel-button-text="取消" @confirm="showQRCode" @cancel="showDialog = false">
-        <p class="dialog-content">是否联系开发者？</p>
-      </van-dialog>
-
-      <!-- 二维码弹层 -->
-      <van-overlay :show="showQR" @click="showQR = false">
-        <div class="qr-container" @click.stop>
-          <van-image :src="wechatQRCode" width="240" height="240" fit="contain" radius="12" />
-          <div class="qr-tip">长按保存二维码，微信扫码联系</div>
+      <!-- 应用信息区 -->
+      <div class="app-info-card">
+        <div class="app-icon">🎓</div>
+        <div class="app-text">
+          <h2 class="app-name">学生信息助手</h2>
+          <p class="app-version">v1.3.0</p>
         </div>
-      </van-overlay>
+      </div>
 
-      <van-divider :style="{ margin: '16px 0' }" />
+      <!-- 功能列表 -->
+      <div class="section">
+        <h3 class="section-title">基本信息</h3>
+        <div class="info-list">
+          <div class="info-item">
+            <span class="label">简介</span>
+            <span class="value">一个轻量级的学生信息管理工具，支持表单填写、本地保存与编辑。</span>
+          </div>
+          <div class="info-item">
+            <span class="label">联系开发者</span>
+            <span class="value clickable" @click="showConfirmDialog">煜</span>
+          </div>
+          <div class="info-item">
+            <span class="label">部署平台</span>
+            <span class="value">Netlify + Vercel + CloudPage</span>
+          </div>
+          <div class="info-item">
+            <span class="label">技术栈</span>
+            <span class="value">Vue 3 + Vant 4</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 当前站点 -->
+      <div class="section">
+        <h3 class="section-title">当前站点</h3>
+        <div class="domain-cards">
+          <a
+            v-for="domain in domains"
+            :key="domain.url"
+            :href="domain.url"
+            target="_blank"
+            class="domain-card"
+          >
+            <span class="domain-icon">🌐</span>
+            <span class="domain-text">{{ domain.name }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 反馈入口 -->
+      <div class="section">
+        <h3 class="section-title">帮助与反馈</h3>
+        <div class="feedback-btn" @click="openFeedbackForm">
+          <span>📝 填写在线反馈表单</span>
+          <van-icon name="arrow" size="16" />
+        </div>
+      </div>
 
       <!-- 更新日志 -->
-      <van-cell-group class="changelog-section">
-        <van-cell title="更新日志" readonly />
-
-        <div class="changelog-entries">
-          <div v-for="entry in changelog" :key="entry.version" class="changelog-entry">
+      <div class="section">
+        <h3 class="section-title">更新日志</h3>
+        <div class="changelog">
+          <div
+            v-for="entry in changelog"
+            :key="entry.version"
+            class="changelog-entry"
+          >
             <div class="version-header">
               <span class="version">v{{ entry.version }}</span>
               <span class="date">{{ formatDate(entry.date) }}</span>
             </div>
-            <van-cell v-for="(change, index) in entry.changes" :key="index" :title="change.desc" readonly
-              class="change-item">
-              <template #right-icon>
+            <ul class="changes-list">
+              <li
+                v-for="(change, index) in entry.changes"
+                :key="index"
+                class="change-item"
+              >
                 <van-tag :type="getTagType(change.type)" size="mini" round>
                   {{ getTagText(change.type) }}
                 </van-tag>
-              </template>
-            </van-cell>
+                <span>{{ change.desc }}</span>
+              </li>
+            </ul>
           </div>
         </div>
-      </van-cell-group>
+      </div>
 
+      <!-- 底部版权 -->
       <div class="footer">
         © {{ new Date().getFullYear() }} 学生信息助手
       </div>
     </div>
+
+    <!-- 联系确认对话框 -->
+    <van-dialog
+      v-model:show="showDialog"
+      title="联系开发者"
+      show-cancel-button
+      confirm-button-text="确定"
+      cancel-button-text="取消"
+      @confirm="showQRCode"
+      @cancel="showDialog = false"
+    >
+      <p class="dialog-content">是否联系开发者？</p>
+    </van-dialog>
+
+    <!-- 二维码弹层 -->
+    <van-overlay :show="showQR" @click="showQR = false">
+      <div class="qr-container" @click.stop>
+        <van-image :src="wechatQRCode" width="240" height="240" fit="contain" radius="12" />
+        <div class="qr-tip">长按保存二维码，微信扫码联系</div>
+      </div>
+    </van-overlay>
   </div>
 </template>
-  
+
 <script setup>
 import { useRouter } from 'vue-router'
-import { ref } from 'vue' // 👈 必须导入
+import { ref } from 'vue'
 import { Dialog } from 'vant'
+
 const router = useRouter()
 
-const FEEDBACK_FORM_URL = 'https://www.wjx.cn/vm/YxTypie.aspx# ' // 👈 替换为你的表单链接
-// 表单
+const FEEDBACK_FORM_URL = 'https://www.wjx.cn/vm/YxTypie.aspx#'
+
 const openFeedbackForm = () => {
-  window.open(FEEDBACK_FORM_URL, '_blank') // 在新标签页打开
+  window.open(FEEDBACK_FORM_URL, '_blank')
 }
 
 const goBack = () => {
@@ -87,8 +140,8 @@ const goBack = () => {
     router.push('/')
   }
 }
-// 你的微信二维码图片（建议放在 public 目录）
-const wechatQRCode = '/wechat-qr.png' // 👈 替换为你的二维码路径
+
+const wechatQRCode = '/wechat-qr.png'
 
 const showDialog = ref(false)
 const showQR = ref(false)
@@ -98,11 +151,18 @@ const showConfirmDialog = () => {
 }
 
 const showQRCode = () => {
-  showDialog.value = false // 关闭确认框
-  showQR.value = true      // 显示二维码
+  showDialog.value = false
+  showQR.value = true
 }
-// 模拟更新日志数据
-// 模拟更新日志数据（已优化内容）
+
+// 域名列表（可自定义）
+const domains = [
+  { name: 'Netlify 部署', url: 'https://xuexin.netlify.app/' },
+  { name: 'Vercel 部署', url: 'https://xuexin-dusky.vercel.app/' },
+  { name: 'CloudPage 部署', url: 'https://xuexin.pages.dev/#/' }
+]
+
+// 更新日志
 const changelog = [
   {
     version: '1.3.0',
@@ -131,13 +191,11 @@ const changelog = [
   }
 ]
 
-// 工具函数：格式化日期为“X月X日”
 const formatDate = (dateStr) => {
   const date = new Date(dateStr)
   return `${date.getMonth() + 1}月${date.getDate()}日`
 }
 
-// 获取标签文本
 const getTagText = (type) => {
   const map = {
     feature: '新增',
@@ -148,28 +206,220 @@ const getTagText = (type) => {
   return map[type] || '更新'
 }
 
-// 获取 Vant Tag 对应的 type（用于颜色）
 const getTagType = (type) => {
   const map = {
-    feature: 'success',    // 绿色
-    improvement: 'primary', // 蓝色
-    fix: 'danger',         // 红色
-    perf: 'warning'        // 橙色，适合性能类
+    feature: 'success',
+    improvement: 'primary',
+    fix: 'danger',
+    perf: 'warning'
   }
   return map[type] || 'default'
 }
 </script>
-  
+
 <style scoped>
+.about-page {
+  padding-top: 46px;
+  min-height: 100vh;
+  background-color: #f7f8fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.content {
+  padding: 20px 16px 32px;
+}
+
+/* 应用信息卡 */
+.app-info-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+}
+
+.app-icon {
+  font-size: 32px;
+  color: #1890ff;
+  margin-right: 16px;
+}
+
+.app-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.app-version {
+  font-size: 14px;
+  color: #999;
+  margin: 4px 0 0;
+}
+
+/* 区块标题 */
+.section {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+/* 信息列表 */
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-weight: 500;
+  color: #666;
+  min-width: 80px;
+}
+
+.value {
+  flex: 1;
+  text-align: right;
+  color: #333;
+  font-size: 14px;
+}
+
+.clickable {
+  color: #1890ff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* 域名卡片 */
+.domain-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.domain-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: #e6f7ff;
+  color: #1890ff;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.domain-card:hover {
+  background: #bae7ff;
+  transform: translateY(-2px);
+}
+
+.domain-icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+/* 反馈按钮 */
+.feedback-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.feedback-btn:hover {
+  background: #f5f5f5;
+}
+
+.feedback-btn span {
+  font-size: 14px;
+  color: #333;
+}
+
+/* 更新日志 */
+.changelog-entry {
+  margin-bottom: 24px;
+}
+
+.version-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.version {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
+
+.date {
+  font-size: 12px;
+  color: #999;
+}
+
+.changes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.change-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.change-item .van-tag {
+  margin-top: 2px;
+}
+
+/* 对话框 & 二维码 */
 .dialog-content {
   text-align: center;
-  padding: 10px 10px;
-  margin: 0;
+  padding: 16px;
   font-size: 16px;
   color: #333;
 }
 
-/* 二维码弹层样式 */
 .qr-container {
   display: flex;
   flex-direction: column;
@@ -180,7 +430,7 @@ const getTagType = (type) => {
   left: 50%;
   transform: translate(-50%, -50%);
   background: white;
-  padding: 20px;
+  padding: 24px;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   z-index: 1000;
@@ -194,75 +444,12 @@ const getTagType = (type) => {
   line-height: 1.4;
 }
 
-.about-page {
-  padding-top: 46px;
-  min-height: 100vh;
-  background-color: #f7f8fa;
-}
-
-.content {
-  padding: 0 12px 24px;
-}
-
-.app-icon {
-  font-size: 28px;
-  margin-right: 12px;
-}
-
-.app-name {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-}
-
-.app-version {
-  font-size: 12px;
-  color: #999;
-  margin-top: 4px;
-}
-
-/* 更新日志样式 */
-.changelog-entries {
-  padding: 0 12px;
-}
-
-.changelog-entry+.changelog-entry {
-  margin-top: 20px;
-}
-
-.version-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  padding: 0 4px;
-}
-
-.version {
-  font-weight: bold;
-  color: #333;
-}
-
-.date {
-  font-size: 12px;
-  color: #999;
-}
-
-.change-item {
-  padding-left: 8px;
-}
-
-.change-item :deep(.van-cell__title) {
-  font-size: 14px;
-  color: #333;
-  line-height: 1.5;
-}
-
+/* 底部版权 */
 .footer {
   text-align: center;
   font-size: 12px;
   color: #999;
-  margin-top: 24px;
+  margin-top: 32px;
   padding-top: 16px;
   border-top: 1px solid #eee;
 }
