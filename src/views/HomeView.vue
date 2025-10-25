@@ -14,14 +14,7 @@
 
       <!-- 功能区：学籍学历 / 出国服务 -->
       <template v-else>
-        <h2 
-          :class="[
-            'section-title',
-            { 'section-title--bold': block.name === '学籍学历学位' || block.name === '出国教育背景信息服务' }
-          ]"
-        >
-          {{ block.name }}
-        </h2>
+        <h2 class="section-title">{{ block.name }}</h2>
         <van-grid :column-num="block.name.includes('出国') ? 3 : 4" :gutter="10">
           <van-grid-item v-for="(item, idx) in block.subData || []" :key="idx" :text="item.name" @click="goToPage(item)">
             <template #icon>
