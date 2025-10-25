@@ -12,9 +12,9 @@
   <link rel="stylesheet" href="https://t3.chei.com.cn/archive/mobile/css/app.css?v=20250711">
   <link rel="stylesheet" href="https://t1.chei.com.cn/common/ch/iconfont.css">
   <link rel="stylesheet" href="https://t1.chei.com.cn/common/css/font/RareWords/RareWordsFonts.css">
-  <!-- <script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script> -->
+  <script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script>
   <script type="text/javascript" async=""
-    src="https://www.googletagmanager.com/gtag/js?id=G-RNH4PZV76K&amp;cx=c&amp;gtm=4e5al1"></script>
+    src="https://www.googletagmanager.com/gtag/js?id=G-RNH4PZV76K&amp;cx=c&amp;gtm=4e5am0"></script>
   <script src="https://hm.baidu.com/hm.js?ed4ddcd4078a486f1f5760a6c426b738"></script>
   <script src="https://t1.chei.com.cn/common/js/vue/2.5.6/vue.min.js"></script>
   <script src="https://t1.chei.com.cn/archive/mobile/js/vant1.47/vant.min.js"></script>
@@ -23,8 +23,12 @@
   <script src="https://t2.chei.com.cn/archive/mobile/js/app-1.0.3.js"></script>
   <script src="https://t3.chei.com.cn/archive/mobile/js/lodash.min.js"></script>
   <script src="https://t4.chei.com.cn/archive/mobile/js/jweixin-1.6.0.js"></script>
-
   <style>
+    .van-nav-bar__left .van-icon-arrow-left {
+      transform: translateY(-12px);
+      /* 向上移动 2px，可按需调整 */
+    }
+
     .extra-wrap {
       display: flex;
       align-items: center;
@@ -222,6 +226,31 @@
     }
   </style>
 
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-100524-5"></script>
+  <script>
+    // 放在ga.jsp 中
+    function gaTrackerOutboundLink(ele, eventCategory, eventAction, eventLabel) {
+      gtag('event', eventAction, {
+        'event_category': eventCategory,
+        'event_label': eventLabel
+      });
+      return true;
+    }
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-100524-5', { 'sample_rate': 5 });
+  </script>
+  <script>
+    // 百度统计
+    var _hmt = _hmt || [];
+    (function () {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?ed4ddcd4078a486f1f5760a6c426b738";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
   <style type="text/css">
     @font-face {
       font-family: "xm-iconfont";
@@ -1090,275 +1119,61 @@
     .layui-form-pane xm-select {
       margin: -1px -1px -1px 0;
     }
-
-
-    .list-card .yxmc {
-      color: #fff !important;
-    }
-
-    .list-card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 12px;
-      text-decoration: none;
-      display: block;
-      /* ✅ 关键：固定高度 */
-      height: 50px;
-      /* 根据设计调整 */
-      color: inherit;
-      overflow: hidden;
-      /* 超出隐藏 */
-    }
-
-    /* 学校名称和学历层次在同一行，不换行 */
-    .yxmc-wrap {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 4px;
-      /* ✅ 关键：强制单行 */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .yxmc {
-      font-weight: bold;
-      font-size: 16px;
-      /* ✅ 关键：省略号 */
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 60%;
-      /* 防止太长挤占右侧 */
-    }
-
-    .cc {
-      color: #fff;
-      font-size: 14px;
-      /* ✅ 关键：省略号 */
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 30%;
-    }
-
-    .des {
-      color: inherit;
-      font-size: 14px;
-      /* ✅ 关键：强制单行 */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .text-span {
-      color: #999;
-      padding: 10px 20px;
-      /* 上下15px，左右20px（可按需调整） */
-      margin-top: -20px;
-
-      /* 2. 缩小行间距（第二行与第一行的距离） */
-      line-height: 1.5;
-      /* 默认行高约1.5，调小至1.2-1.3更紧凑 */
-
-      /* 3. 限制容器宽度（确保文本换行，才能看到行间距效果） */
-      width: 300px;
-      /* 例如限制宽度为300px，文本会自动换行 */
-
-    }
-
-    /* 去除滚动条 */
-    html {
-      scrollbar-width: none;
-      /* Firefox */
-      -ms-overflow-style: none;
-      /* IE/Edge */
-    }
-
-    html::-webkit-scrollbar {
-      display: none;
-      /* Chrome/Safari */
-    }
-
-    body {
-      overflow: auto;
-      /* 允许滚动 */
-      margin: 0;
-    }
-
-    .van-nav-bar__left .van-icon-arrow-left {
-      transform: translateY(-12px);
-      /* 向上移动 2px，可按需调整 */
-    }
   </style>
-
 </head>
 
 <body style="font-size: 12px;">
   <div id="app" class="my-container">
-
-    <div class="green-header van-nav-bar van-hairline--bottom">
-      <div class="van-nav-bar__left"><i class="">
-          <!---->
-          <!---->
-        </i>
-        <!-- 返回按钮 -->
-        <div class="" @click="onClickLeft">
-          <i class="van-icon van-icon-arrow-left van-nav-bar__arrow"></i>
-        </div>
-
+    <div class="green-header van-nav-bar van-hairline--bottom" style="z-index: 1;">
+      <div class="van-nav-bar__left">
+        
+    <!-- 返回按钮 -->
+    <div class="" @click="onClickLeft">
+      <i class="van-icon van-icon-arrow-left van-nav-bar__arrow"></i>
+    </div>
+        <!---->
       </div>
-      <div class="van-ellipsis van-nav-bar__title">高等教育信息</div>
+      <div class="van-ellipsis van-nav-bar__title">本人身份核验</div>
       <div class="van-nav-bar__right">
         <!---->
       </div>
     </div>
-    <div class="vote-part" style="">
-      <div id="vote_wap" style="display: block;"><a
-          href="https://xz.chsi.com.cn/cp/survey/yhdy3/show.action?from=gdjy_index_wap" style="display:block"
-          onmousedown="clickVoteGa(this, 'zcsx')" class="vote-jy-part vote_bg_zcsx"></a></div>
-    </div>
-    <!---->
-    <div class="padding16 xjxl-list chsi-font">
-      <div class="list-tit van-row">
-        <div class="l van-col van-col--8">学籍信息 ({{ xjList.length }})</div>
-        <div class="r van-col van-col--16">还有学籍没有显示出来？<a href="javascript:;">尝试绑定</a></div>
-      </div>
+    <div class="check-page">
+      <h4>为保障您的信息安全，请选择一种方式进行核验，核验通过后才能申请在线验证报告。
 
-      <div class="xj list-card" v-for="item in xjList" :key="item.id">
-        <a href="#" @click.prevent="goToXjxx(item)">
-          <div class="yxmc-wrap">
-            <div class="yxmc">{{ item.schoolName }}</div>
-            <div class="cc">{{ item.educationLevel }}</div>
-          </div>
-          <div class="des">{{ item.major }}　|　{{ item.studyForm }}</div>
-        </a>
-      </div>
-
-      <!-- //不能删除 -->
-      <div class="list-tit van-row">
-
-
-
-        <div class="l van-col van-col--8">学历信息 ({{ xlList.length }})</div>
-
-        <div class="r van-col van-col--16">还有学历没有显示出来？<a href="javascript:;">尝试绑定</a>
-        </div>
-
-
-        <template v-for="(item, index) in xlList" :key="index">
-          <!-- 你提供的代码片段，原样循环 -->
-      </div>
-      <div class="xl list-card">
-        <a href="#" @click.prevent="goToXjxx(item)">
-          <div class="yxmc-wrap">
-            <div class="yxmc">{{ item.schoolName }}</div>
-            <div class="cc">{{ item.educationLevel }}</div>
-          </div>
-          <div class="des">{{ item.major }}　|　{{ item.studyForm }}</div>
-        </a>
-      </div>
-      </template>
-
-
-
-
-      <!-- 备用代码 -->
-      <!-- </div>
-             <div class="xl list-card"><a href="https://my.chsi.com.cn/archive/wap/gdjy/xl/detail.action?id=n5ofm6g8tepdtro5"><div class="yxmc-wrap"><div class="yxmc">学校</div> <div class="cc">专科</div></div> <div class="des">工程造价　|　普通全日制</div> -->
-
-      <!-- 这一行也不能删 -->
-
-      <div>
-
-
-
-        </a>
-        <!---->
-      </div>
-      <div class="list-tit van-row">
-        <div class="l van-col van-col--8">学位信息
-          <!---->
-        </div>
-
-        <div class="r van-col van-col--16">还有学位没有显示出来？<a href="javascript:;">尝试绑定</a></div>
-      </div>
-      <div class="no-data">
-        <h4 style="padding: 0px 0.3rem;">您还未绑定学位信息，可以使用“尝试绑定学位”功能绑定您的学位 <a href="https://www.chsi.com.cn/help/cxfw.jsp"
-            target="_blank"><i title="查看" class="iconfont"></i></a></h4>
-        <div class="find-xjxl">
-          <div class="find-list van-row">
-            <div class="van-col van-col--2"><span>1</span></div>
-            <div class="paddL2 van-col van-col--22">
-              本系统提供社会查询的学位证书数据来源于相关学位授予单位经所在省（自治区、直辖市）学位委员会办公室报国务院学位委员会办公室备案的学位授予数据。
-            </div>
-          </div>
-          <div class="find-list van-row">
-            <div class="van-col van-col--2"><span>2</span></div>
-            <div class="paddL2 van-col van-col--22">
-              请确保注册账号的“姓名”及“证件号码”无误，且对应的学位信息属于本系统<a href="https://www.chsi.com.cn/help/cxfw.jsp"
-                target="_blank">查询范围</a>，若您未成功绑定学位信息，请与有关学位授予单位的学位管理部门联系核实。
-            </div>
-          </div>
-          <div class="find-list van-row">
-            <div class="van-col van-col--2"><span>3</span></div>
-            <div class="paddL2 van-col van-col--22">
-              经核实后属学位授予信息漏报、错报的，由学位授予单位依照“学位授予信息补报、修改流程”更正相关内容。本网站无权修改任何数据。
-            </div>
-          </div>
-        </div>
-        <div class="find-xjxl-bottom"><span class="colorGreen">提示信息 <i title="展开" class="iconfont"></i></span></div>
-      </div>
-
-
-      <div class="list-tit van-row">
-        <div class="l van-col van-col--24">考研信息
-          <!---->
-        </div>
-      </div>
-
-
-      <div class="no-data">
-        <h4 style="padding: 0px 0.3rem;">您没有考研信息！<a href="https://www.chsi.com.cn/help/cxfw.jsp" target="_blank"><i
-              title="查看" class="iconfont"></i></a></h4>
-
-
-        <div class="text-span">您目前没有考研信息，系统提供2006年以来入学的硕士研究生报名和成绩数据。</div>
-
-      </div>
-      <!---->
-      <!---->
-
-      <!---->
-      <!---->
-      <!---->
-      <!---->
-
-
-
-
-      <div class="van-dialog" style="display: none;">
-        <!---->
-        <div class="van-dialog__content">
-          <div class="dialog-tip-div">
-            <h3>没有学籍</h3>
-            系统没有找到您的在校生学籍信息，有可能是因为您注册时填写的姓名和证件号码两项与学校上报的学籍注册数据不相同导致的。<br><br>
-            1、查看您注册时填写的姓名和证件号码信息 <a href="https://account.chsi.com.cn/account/account!show" target="_blank">点击查看</a><br>
-            2、姓名和证件号码无误，我还有学籍没显示出来 <a href="javascript:;">找找看？</a>
-          </div>
-        </div>
-        <div class="van-hairline--top van-dialog__footer"><button
-            class="van-button van-button--default van-button--large van-dialog__cancel" style="display: none;"><span
-              class="van-button__text">
-              取消
-            </span></button><button class="van-button van-button--default van-button--large van-dialog__confirm"><span
-              class="van-button__text">
-              确认
-            </span></button></div>
-      </div>
+      </h4>
+      <ul class="verify-list">
+        <li class="verify-list-li">
+          <div class="type-title">方式 1</div>
+          <div class="type-txt">使用学信网App进行实人核验</div> <a href="javascript:void(0)" class="verify-btn-wap">验证</a>
+        </li>
+        <li class="verify-list-li">
+          <div class="type-title">方式 2</div>
+          <div class="type-txt">使用支付宝进行实人核验</div> <a href="javascript:void(0)" class="verify-btn-wap">验证</a>
+        </li>
+      </ul>
     </div>
   </div>
   <script>
-
+    const dictionary1 = {
+      zh_CN: {
+        messages: {
+          required: (field) => "该题为必填项，请填写完整后再提交。",
+          numeric: function (name, a) {
+            var text = '必须为数字'
+            return text
+          },
+          between: function (name, a) {
+            var text = '请选择' + a[0] + '项。'
+            if (a[0] != a[1]) {
+              text = '请选择' + a[0] + '~' + a[1] + '项。'
+            }
+            return text
+          }
+        }
+      }
+    };
+    Validator.updateDictionary(dictionary1);
   </script>
   <script>
     var myVue = new Vue({
@@ -1366,118 +1181,91 @@
       data: function () {
         return {
           activeBottom: 0,
-          topText: '学信档案',//标题文字,
-          xjList: [
-            {
-              id: 'n5ofm6g8tepdtro5',
-              schoolName: '北京大学',
-              educationLevel: '专科',
-              major: '工程造价',
-              studyForm: '普通全日制',
-            },
-            // {
-            //   id: 'abc123',
-            //   schoolName: 'YY大学',
-            //   educationLevel: '本科',
-            //   major: '计算机科学与技术',
-            //   studyForm: '普通全日制',
-            // },
-
-
-          ],
-          xlList: [
-            {
-              id: 'abc123',
-              schoolName: '清华大学',
-              educationLevel: '本科',
-              major: '计算机科学与技术',
-              studyForm: '普通全日制',
-            },
-            //  {
-            //   id: 'abc123',
-            //   schoolName: '河北',
-            //   educationLevel: '本科',
-            //   major: '计算机科学与技术',
-            //   studyForm: '普通全日制',
-            // },
-            // {
-            //   id: 'abc123',
-            //   schoolName: 'hahaha',
-            //   educationLevel: '本科',
-            //   major: '工程造价',
-            //   studyForm: '普通全日制',
-            // },
-            // {
-            //   id: 'abc123',
-            //   schoolName: '奥里给',
-            //   educationLevel: '本科',
-            //   major: '计算机科学与技术',
-            //   studyForm: '普通全日制',
-            // },
-          ],
+          topText: '学信档案' //标题文字
         }
       },
       mixins: typeof mixin != 'undefined' ? [mixin] : {},
       created: function () {
-        this.loadxlFromStorage()  //学历
-        this.loadxjFromStorage()
       },
       methods: {
-        loadxlFromStorage: function () {
-          try {
-            const saved = localStorage.getItem('xlList');
-            if (saved) {
-              this.xlList = JSON.parse(saved);
-              console.log('✅ 数据已从 localStorage 加载');
-              console.log(this.xlList)
-            } else {
-              console.warn('⚠️ localStorage 中无数据');
-            }
-          } catch (e) {
-            console.error('❌ 加载失败:', e);
-            // 可选：清除损坏的数据
-            localStorage.removeItem('xlList');
-          }
-        },
-
-        loadxjFromStorage: function () {
-          try {
-            const saved = localStorage.getItem('xjList');
-            if (saved) {
-              this.xjList = JSON.parse(saved);
-              console.log('✅ 数据已从 localStorage 加载');
-              console.log(this.xlList)
-            } else {
-              console.warn('⚠️ localStorage 中无数据');
-            }
-          } catch (e) {
-            console.error('❌ 加载失败:', e);
-            // 可选：清除损坏的数据
-            localStorage.removeItem('xlList');
-          }
-        },
-
         onClickLeft: function () { //左上的返回按钮
           history.back(-1);
         },
-        goToIndex: function () {
-          window.location.href = 'https://my.chsi.com.cn/archive/wap/index.action';
-          console.log('aa')
+      
+        getQueryString: function (name) {//获取地址栏参数
+          var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+          var r = window.location.search.substr(1).match(reg);
+          if (r != null) {
+            return unescape(r[2]);
+          }
+          return null;
         },
-        goToXjxx(item) {
-          const url = '/xjxx.html?info=' + encodeURIComponent(JSON.stringify(item));
-          // console.log('🔗 跳转链接:', url); // ←←← 看这里是否包含有效数据
-          window.location.href = url;
+        VoteGoToIndex: function () {//投票完成返回首页
+          var _from = this.getQueryString('from');
+          if (_from == 'archive-dctp-wap') {
+            window.location.href = 'https://my.chsi.com.cn/archive/survey/index.action';
+          } else {
+            window.location.href = 'https://my.chsi.com.cn/archive/wap/index.action';
+          }
+        },
+        addCookie: function (name, value) { //设置cookie
+          var cookieString = name + "=" + escape(value);
+          document.cookie = cookieString;
+          document.cookie.setSecure = true;//只允许在https环境下使用cookie
+        },
+        getCookie: function (name) {
+          var strCookie = document.cookie;
+          var arrCookie = strCookie.split("; ");
+          for (var i = 0; i < arrCookie.length; i++) {
+            var arr = arrCookie[i].split("=");
+            if (arr[0] == name) return arr[1];
+          }
+          return "";
+        },
+        trimSpace: function (s) {//去掉左右空格
+          return s.replace(/(^\s*)|(\s*$)/g, "");
+        },
+        showSfhyOrder: function () {
+          //展示身份核验方式的序号，动态组合显示方式一、二、三
+          var nodeList = document.getElementsByClassName('verify-list')[0].getElementsByClassName("verify-list-li");
+          var liLen = nodeList.length;
+          for (var i = 0; i < liLen; i++) {
+            nodeList[i].getElementsByTagName('div')[0].innerText = '方式 ' + (i + 1);
+          }
+        },
+        noticeFace: function (from, chinal) {
+          var _this = this;
+          api.syncAjax('post', 'https://my.chsi.com.cn/archive/gdjy/check/face/notice.action', { data: { from: from, chinal: chinal } }).then(function (res) {
+            if (res.status == 0) {
+              window.location.href = res.result;
+            } else {
+              _this.$toast(res.message);
+            }
+          });
         }
-
       }
     });
   </script>
 
   <script type="text/javascript">
-
-
-
+    //解决手机浏览器自带返回 没刷新问题
+    (function () {
+      var isPageHide = false;
+      window.addEventListener('pageshow', function () {
+        if (isPageHide) {
+          var curUrl = window.location.href,
+            curIndex = curUrl.substring(curUrl.indexOf('wap/') + 4);
+          if (curIndex == 'my.jsp') {
+            myVue.$data.activeBottom = 4;
+          } else {
+            myVue.$data.activeBottom = 0;
+          }
+        }
+      });
+      window.addEventListener('pagehide', function () {
+        isPageHide = true;
+      });
+    })();
   </script>
 
 </body>

@@ -3,7 +3,14 @@
     <van-nav-bar title="新闻" fixed />
 
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <!-- 首次加载或刷新时显示加载中 -->
+      <div v-if="initialLoading" class="initial-loading">
+        <van-loading type="spinner" size="24px" vertical>加载中...</van-loading>
+      </div>
+
+      <!-- 数据加载完成后显示列表 -->
       <van-list
+        v-else
         v-model:loading="loading"
         :finished="finished"
         finished-text="没有更多了"
@@ -20,8 +27,8 @@
       </van-list>
     </van-pull-refresh>
 
-        <!-- 底部导航 -->
-        <BottomNav />
+    <!-- 底部导航 -->
+    <BottomNav />
   </div>
 </template>
 
@@ -33,6 +40,7 @@ const list = ref([])
 const loading = ref(false)
 const finished = ref(false)
 const refreshing = ref(false)
+const initialLoading = ref(true) // 控制初始加载状态
 
 const formatTime = (displayOn) => {
   if (!displayOn || displayOn.length !== 14) return ''
@@ -79,6 +87,8 @@ const loadInitialData = async () => {
     console.error('加载失败:', error)
     Toast('加载失败')
     finished.value = true
+  } finally {
+    initialLoading.value = false
   }
 }
 
@@ -89,6 +99,7 @@ onMounted(() => {
 
 // 下拉刷新
 const onRefresh = async () => {
+  initialLoading.value = true // 重新显示加载中
   try {
     await loadInitialData()
     Toast('刷新成功')
@@ -96,6 +107,7 @@ const onRefresh = async () => {
     Toast('刷新失败')
   } finally {
     refreshing.value = false
+    // 注意：loadInitialData 的 finally 已经将 initialLoading 设为 false
   }
 }
 
@@ -132,6 +144,15 @@ const onLoad = async () => {
 .news-page {
   padding-top: 46px;
   background-color: #f7f8fa;
+  min-height: 100vh;
+}
+
+.initial-loading {
+  padding: 40px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
 }
 
 .van-cell__label {
