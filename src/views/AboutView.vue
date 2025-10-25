@@ -44,7 +44,7 @@
             <li><strong>访问限制说明</strong>：
               <ul class="sub-list">
                 <li><strong>Netlify</strong>：有流量配额限制，高峰期可能无法访问；</li>
-                <li><strong>Vercel</strong>：主要面向境外网络，国内访问可能不稳定；</li>
+                <li><strong>Vercel</strong>：因网络策略限制，<strong>无法正常加载新闻</strong>，且国内访问可能不稳定；</li>
                 <li><strong>Cloudflare Pages</strong>：国内访问更稳定，推荐优先使用。</li>
               </ul>
             </li>
