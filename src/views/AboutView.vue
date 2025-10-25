@@ -102,46 +102,60 @@ const showQRCode = () => {
   showQR.value = true      // 显示二维码
 }
 // 模拟更新日志数据
+// 模拟更新日志数据（已优化内容）
 const changelog = [
-{
+  {
     version: '1.3.0',
     date: '2025-10-25',
     changes: [
-      { type: 'feature', desc: '补充剩下页面' },
-      { type: 'improvement', desc: '完善修改页面排序和修改冲突' }
+      { type: 'feature', desc: '补充学籍、学历、学位等剩余页面' },
+      { type: 'perf', desc: '优化页面加载性能，提升响应速度' },
+      { type: 'improvement', desc: '完善表单修改时的排序逻辑与冲突处理' }
     ]
   },
   {
     version: '1.2.0',
     date: '2025-10-24',
     changes: [
-      { type: 'feature', desc: '补充剩下页面' },
-      { type: 'improvement', desc: '增加修改信息功能' }
+      { type: 'feature', desc: '新增信息修改功能入口' },
+      { type: 'improvement', desc: '优化表单编辑体验与数据同步机制' }
     ]
   },
   {
     version: '1.1.0',
     date: '2025-10-23',
     changes: [
-      { type: 'feature', desc: '增加修改功能' },
-      { type: 'fix', desc: '修复页面错乱' }
+      { type: 'feature', desc: '实现基础信息修改功能' },
+      { type: 'fix', desc: '修复页面布局错乱问题' }
     ]
   }
 ]
 
-// 工具函数
+// 工具函数：格式化日期为“X月X日”
 const formatDate = (dateStr) => {
   const date = new Date(dateStr)
   return `${date.getMonth() + 1}月${date.getDate()}日`
 }
 
+// 获取标签文本
 const getTagText = (type) => {
-  const map = { feature: '新增', improvement: '优化', fix: '修复' }
+  const map = {
+    feature: '新增',
+    improvement: '优化',
+    fix: '修复',
+    perf: '性能'
+  }
   return map[type] || '更新'
 }
 
+// 获取 Vant Tag 对应的 type（用于颜色）
 const getTagType = (type) => {
-  const map = { feature: 'success', improvement: 'primary', fix: 'danger' }
+  const map = {
+    feature: 'success',    // 绿色
+    improvement: 'primary', // 蓝色
+    fix: 'danger',         // 红色
+    perf: 'warning'        // 橙色，适合性能类
+  }
   return map[type] || 'default'
 }
 </script>
