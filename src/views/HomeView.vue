@@ -188,10 +188,12 @@ const goToPage = (item: any) => {
 
 <style scoped>
 
-.section-title--bold {
-  font-weight: bold !important;
-  /* 可选：增强视觉粗度 */
-  text-shadow: 0 0 0.3px rgba(0, 0, 0, 0.2);
+.section-title {
+  font-family: 'Alibaba PuHuiTi', 'Microsoft YaHei', sans-serif;
+  /* 注意：因为加载的是 Bold 字体文件，所以 font-weight 用 normal 即可 */
+  font-weight: normal;
+  font-size: 17px;
+  color: #333;
 }
 .home-container {
   padding-bottom: 50px;
