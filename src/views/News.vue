@@ -70,12 +70,12 @@ const getCurrentOn = () => {
 
 // 加载数据（通用函数）
 const fetchData = async (onParam) => {
-  const res = await fetch(`/api/news?ope=old&size=10&on=${onParam}`)
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  const data = await res.json()
-  if (!Array.isArray(data)) throw new Error('返回数据不是数组')
-  return data
-}
+  const res = await fetch(`/api/news?ope=old&size=10&on=${onParam}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  if (!Array.isArray(data)) throw new Error('返回数据不是数组');
+  return data;
+};
 
 // 首次加载 & 刷新
 const loadInitialData = async () => {
