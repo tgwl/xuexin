@@ -1428,8 +1428,7 @@
             const saved = localStorage.getItem('xlList');
             if (saved) {
               this.xlList = JSON.parse(saved);
-              console.log('✅ 数据已从 localStorage 加载');
-              console.log(this.xlList)
+              
             } else {
               console.warn('⚠️ localStorage 中无数据');
             }
@@ -1445,8 +1444,7 @@
             const saved = localStorage.getItem('xjList');
             if (saved) {
               this.xjList = JSON.parse(saved);
-              console.log('✅ 数据已从 localStorage 加载');
-              console.log(this.xlList)
+              // console.log('✅ 数据已从 localStorage 加载');
             } else {
               console.warn('⚠️ localStorage 中无数据');
             }
@@ -1462,7 +1460,6 @@
         },
         goToIndex: function () {
           window.location.href = 'https://my.chsi.com.cn/archive/wap/index.action';
-          console.log('aa')
         },
         goToXjxx(item) {
           const url = '/xjxx.html?info=' + encodeURIComponent(JSON.stringify(item));
