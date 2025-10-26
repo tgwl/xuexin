@@ -1,11 +1,10 @@
 <template>
   <div class="home-container">
     <!-- 顶部导航 -->
-    <van-nav-bar title="学信网" />
+    <van-nav-bar title="学信网风格演示" />
 
     <!-- 动态区块渲染 -->
     <div v-for="block in orderedBlocks" :key="block.id" class="section">
-
       <!-- Banner 横幅：在线考试系统 -->
       <template v-if="block.id === '6'">
         <div class="banner-wrapper" @click="goToOnlineExam">
@@ -28,23 +27,49 @@
       </template>
     </div>
 
-
     <!-- 底部导航 -->
     <BottomNav />
+
+    <!-- 顶部通知（从上滑入） -->
+    <van-notify v-model:show="showWarning" type="warning" color="#d9534f" background="#fff7f7" :duration="0"
+      @close="showWarning = false">
+      {{ warningMessage }}
+    </van-notify>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { onMounted, onUpdated } from 'vue'
+import { Notify } from 'vant'
 
 const router = useRouter()
-const activeTab = ref(0)
+const showWarning = ref(true)
+const countdown = ref(10)
+const warningMessage = ref('')
+
+let timer: number | null = null
+
 
 onMounted(() => {
-
+  updateMessage()
+  timer = window.setInterval(() => {
+    countdown.value--
+    updateMessage()
+    if (countdown.value <= 0) {
+      clearInterval(timer!)
+      showWarning.value = false
+    }
+  }, 1000)
 })
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
+
+function updateMessage() {
+  warningMessage.value = `本页面为前端技术演示项目，与学信网（chsi.com.cn）无任何关联。所有图标、链接及内容均来自其公开页面，仅用于个人学习与非商业用途。严禁用于任何非法、商业或误导性行为。（${countdown.value}秒后关闭）`
+}
 
 const rawData = {
   code: '200',
@@ -192,7 +217,6 @@ const goToOnlineExam = () => {
 </script>
 
 <style scoped>
-
 /* banner图跳转*/
 .section-title {
   font-family: 'Noto Sans SC', sans-serif;

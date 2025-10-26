@@ -21,6 +21,7 @@ const routes = [
   { path: '/logout', component: LogoutView } ,
   { path: '/onlineexam', component: OnlineExamView } ,
 
+
 ]
 
 const router = createRouter({
