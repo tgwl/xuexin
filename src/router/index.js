@@ -7,6 +7,8 @@ import EditView from '../views/EditView.vue'
 import AccountView from '../views/AccountView.vue' 
 import AboutView from '../views/AboutView.vue' 
 import LogoutView from '../views/LogoutView.vue' 
+import OnlineExamView from '../views/OnlineExamView.vue' 
+
 
 const routes = [
   { path: '/', component: HomeView },
@@ -17,6 +19,8 @@ const routes = [
   { path: '/account', component: AccountView } ,
   { path: '/about', component: AboutView } ,
   { path: '/logout', component: LogoutView } ,
+  { path: '/onlineexam', component: OnlineExamView } ,
+
 ]
 
 const router = createRouter({

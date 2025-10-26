@@ -5,9 +5,10 @@
 
     <!-- 动态区块渲染 -->
     <div v-for="block in orderedBlocks" :key="block.id" class="section">
+
       <!-- Banner 横幅：在线考试系统 -->
       <template v-if="block.id === '6'">
-        <div class="banner-wrapper">
+        <div class="banner-wrapper" @click="goToOnlineExam">
           <van-image :src="block.icon?.trim()" fit="contain" width="100%" height="100%" />
         </div>
       </template>
@@ -27,7 +28,7 @@
       </template>
     </div>
 
- 
+
     <!-- 底部导航 -->
     <BottomNav />
   </div>
@@ -42,7 +43,7 @@ const router = useRouter()
 const activeTab = ref(0)
 
 onMounted(() => {
-  
+
 })
 
 const rawData = {
@@ -182,16 +183,22 @@ const goToPage = (item: any) => {
   }
 }
 
+// banner图跳转
+const goToOnlineExam = () => {
+  router.push('/onlineexam')
+}
 
 
 </script>
 
 <style scoped>
 
+/* banner图跳转*/
 .section-title {
   font-family: 'Noto Sans SC', sans-serif;
   font-weight: 700;
 }
+
 .home-container {
   padding-bottom: 50px;
   background-color: #f7f8fa;
