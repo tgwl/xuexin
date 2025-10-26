@@ -4,7 +4,7 @@
     <van-nav-bar title="关于与使用" left-arrow @click-left="goBack" fixed />
 
     <div class="content">
-      <!-- 应用信息（始终显示） -->
+      <!-- 应用信息 -->
       <div class="card app-card">
         <div class="app-header">
           <div class="app-icon">🎓</div>
@@ -15,6 +15,7 @@
         </div>
       </div>
 
+      <!-- 项目简介 -->
       <div class="card intro-card">
         <h2 class="section-title">📖 项目简介</h2>
         <p class="intro-text">
@@ -85,33 +86,15 @@
         </van-collapse-item>
       </van-collapse>
 
-      <!-- 联系与反馈（始终显示） -->
-      <div class="card feedback-card">
-        <h2 class="section-title">📬 联系与反馈</h2>
-        <div class="feedback-actions">
-          <van-button type="primary" block @click="openFeedbackForm">📝 填写反馈表单</van-button>
-          <van-button plain type="info" block @click="showConfirmDialog" style="margin-top: 12px">
-            💬 联系开发者（微信）
-          </van-button>
-        </div>
+      <!-- 联系开发者（一行简洁展示） -->
+      <div class="card contact-card" @click="sendEmail">
+        <p class="contact-text">
+          开发者：<span class="developer-name">煜</span>
+        </p>
       </div>
 
       <div class="footer">© {{ new Date().getFullYear() }} 学生信息助手</div>
     </div>
-
-    <!-- 联系确认对话框 -->
-    <van-dialog v-model:show="showDialog" title="联系开发者" show-cancel-button confirm-button-text="显示二维码"
-      cancel-button-text="取消" @confirm="showQRCode" @cancel="showDialog = false">
-      <p class="dialog-text">是否查看微信联系二维码？</p>
-    </van-dialog>
-
-    <!-- 二维码弹层 -->
-    <van-overlay :show="showQR" @click="showQR = false">
-      <div class="qr-container" @click.stop>
-        <van-image :src="wechatQRCode" width="220" height="220" fit="contain" radius="12" />
-        <div class="qr-tip">长按保存二维码，微信扫码联系</div>
-      </div>
-    </van-overlay>
   </div>
 </template>
 
@@ -119,12 +102,9 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-
 const router = useRouter()
-const FEEDBACK_FORM_URL = 'https://www.wjx.cn/vm/YxTypie.aspx#'
-const wechatQRCode = '/wechat-qr.png'
-
 const activeName = ref('usage')
+
 const goBack = () => {
   if (window.history.length > 1) {
     router.go(-1)
@@ -133,14 +113,7 @@ const goBack = () => {
   }
 }
 
-const openFeedbackForm = () => {
-  window.open(FEEDBACK_FORM_URL, '_blank')
-}
-
-// 默认展开：仅“使用说明”
-const activeNames = ref(['usage'])
-
-// 站点列表
+// 站点列表（已清理多余空格）
 const sites = [
   { name: 'Netlify 部署', url: 'https://xuexin.netlify.app/' },
   { name: 'Vercel 部署', url: 'https://xuexin-dusky.vercel.app/' },
@@ -200,37 +173,38 @@ const getTagType = (type) => {
   return map[type] || 'default'
 }
 
-// 微信联系
-const showDialog = ref(false)
-const showQR = ref(false)
+const DEVELOPER_EMAIL = 'tg2521150881@gmail.com' // 👈 请替换成你的真实邮箱！
 
-const showConfirmDialog = () => {
-  showDialog.value = true
-}
-
-const showQRCode = () => {
-  showDialog.value = false
-  showQR.value = true
+const sendEmail = () => {
+  window.location.href = `mailto:${DEVELOPER_EMAIL}?subject=学生信息助手反馈`
 }
 </script>
 
 <style scoped>
-.intro-card {
-  margin-bottom: 16px;
+.developer-name {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
 
-.intro-text {
-  font-size: 14px;
-  color: #334155;
-  line-height: 1.6;
-  margin: 0;
+.developer-name:hover {
+  opacity: 0.8;
+}
+
+.contact-card {
+  margin-top: 16px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
 }
 
 .about-guide-page {
   padding-top: 46px;
   min-height: 100vh;
-  background-color: #f8fafc;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
 .content {
@@ -239,67 +213,80 @@ const showQRCode = () => {
 
 .card {
   background: white;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 18px;
+  padding: 22px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
 }
 
 .app-card {
-  margin-bottom: 16px;
-}
-
-.feedback-card {
-  margin-top: 16px;
+  text-align: center;
+  padding: 24px;
 }
 
 .app-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .app-icon {
-  font-size: 32px;
+  font-size: 40px;
   color: #3b82f6;
 }
 
 .app-name {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  color: #1e293b;
+  color: #0f172a;
   margin: 0;
 }
 
 .app-version {
   font-size: 14px;
   color: #64748b;
-  margin-top: 4px;
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
-  color: #1e293b;
+  color: #0f172a;
   margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.intro-text {
+  font-size: 15px;
+  color: #334155;
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* 步骤 */
 .steps {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .step {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 14px;
 }
 
 .step-num {
-  flex: 0 0 24px;
-  height: 24px;
+  flex: 0 0 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -308,20 +295,21 @@ const showQRCode = () => {
   border-radius: 50%;
   font-weight: bold;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .step-text {
   flex: 1;
-  font-size: 14px;
+  font-size: 15px;
   color: #334155;
   line-height: 1.5;
 }
 
 /* 注意事项 */
 .note-list {
-  padding-left: 20px;
+  padding-left: 22px;
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
   color: #334155;
   line-height: 1.7;
 }
@@ -331,66 +319,73 @@ const showQRCode = () => {
 }
 
 .sub-list {
-  margin-top: 8px;
+  margin-top: 10px;
   padding-left: 20px;
-  font-size: 13px;
+  font-size: 14px;
   color: #64748b;
 }
 
 .sub-list li {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 code {
   background: #f1f5f9;
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: 2px 6px;
+  border-radius: 5px;
   font-size: 13px;
+  font-family: monospace;
 }
 
 /* 站点卡片 */
 .domain-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .domain-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 14px 18px;
   background: #f8fafc;
-  border-radius: 12px;
+  border-radius: 14px;
   text-decoration: none;
-  color: #1e293b;
-  font-size: 14px;
-  transition: background 0.2s;
+  color: #0f172a;
+  font-size: 15px;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .domain-card:hover {
   background: #eef2ff;
+  transform: translateX(4px);
 }
 
 .domain-arrow {
   color: #94a3b8;
+  transition: transform 0.2s;
+}
+
+.domain-card:hover .domain-arrow {
+  transform: translateX(4px);
 }
 
 /* 更新日志 */
 .log-entry {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .log-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 14px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: #0f172a;
 }
 
 .log-version {
   font-weight: 600;
-  color: #1e293b;
 }
 
 .log-date {
@@ -406,59 +401,52 @@ code {
 .log-list li {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  padding: 6px 0;
-  font-size: 14px;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 15px;
   color: #334155;
   line-height: 1.5;
 }
 
 .log-list li .van-tag {
   margin-top: 2px;
+  flex-shrink: 0;
 }
 
-/* 反馈按钮 */
-.feedback-actions {
-  margin-top: 12px;
-}
-
-/* 二维码 */
-.qr-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-}
-
-.qr-tip {
-  margin-top: 12px;
-  font-size: 14px;
-  color: #64748b;
+/* 联系开发者 */
+.contact-card {
+  margin-top: 16px;
   text-align: center;
-  line-height: 1.4;
 }
 
-.dialog-text {
-  text-align: center;
-  padding: 16px;
+.contact-text {
+  margin: 0;
+  font-size: 16px;
   color: #334155;
+  font-weight: 500;
 }
 
+.contact-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.contact-link:hover {
+  background: #eff6ff;
+  text-decoration: underline;
+}
+
+/* 页脚 */
 .footer {
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
   color: #94a3b8;
-  margin-top: 24px;
-  padding-top: 16px;
+  margin-top: 28px;
+  padding-top: 20px;
   border-top: 1px solid #e2e8f0;
 }
 </style>
