@@ -8,7 +8,6 @@
         style="background-color: #27ae60; color: white;"
       >
         <template #left>
-          <!-- 保留首页图标，但绑定点击事件为返回上一页 -->
           <van-icon name="home-o" size="24" color="white" @click="goBack" />
         </template>
         <template #right>
@@ -22,18 +21,16 @@
   
       <!-- 主体内容 -->
       <div class="content-wrapper">
-        <!-- 警告图标 -->
         <div class="icon-circle">
           <span class="exclamation-mark">!</span>
         </div>
   
-        <!-- 提示文字 -->
-        <div class="message-text">
-          您登录的账号不在报考单位的准考名单中，<br>
-          请先确认账号信息，若有疑问，请联系报考单位。
+        <!-- 文字容器：居中对齐 -->
+        <div class="message-container">
+          <div class="message-line">您登录的账号不在报考单位的准考名单中，</div>
+          <div class="message-line">请先确认账号信息，若有疑问，请联系报考单位。</div>
         </div>
   
-        <!-- 返回首页按钮 -->
         <van-button
           type="primary"
           block
@@ -60,12 +57,10 @@
   
   const router = useRouter()
   
-  // 点击左上角“首页”图标 → 返回上一页
   const goBack = () => {
     router.back()
   }
   
-  // 点击底部按钮 → 跳转首页
   const goHome = () => {
     router.push('/')
   }
@@ -73,7 +68,7 @@
   
   <style scoped>
   .page-container {
-    background-color: #ffffff;
+    background-color: #fff;
     min-height: 100vh;
     padding-top: 50px;
   }
@@ -116,11 +111,18 @@
     line-height: 1;
   }
   
-  .message-text {
+  .message-container {
+    text-align: center;
+    margin-bottom: 40px;
+    max-width: 90%;
+  }
+  
+  .message-line {
     font-size: 16px;
     color: #666;
     line-height: 1.6;
-    margin-bottom: 40px;
-    max-width: 80%;
+    white-space: nowrap; /* 禁止自动换行 */
+    display: block;       /* 每行独占一行 */
+    text-align: center;   /* 关键：让每行文字自身居中 */
   }
   </style>
