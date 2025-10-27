@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <!-- 顶部导航 -->
-    <van-nav-bar title="学信网风格演示" />
+    <van-nav-bar title="学信网" />
 
     <!-- 动态区块渲染 -->
     <div v-for="block in orderedBlocks" :key="block.id" class="section">
